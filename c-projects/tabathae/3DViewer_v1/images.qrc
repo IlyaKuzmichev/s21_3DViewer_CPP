@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/avia">
+        <file>aviasales-vector-logo-small.png</file>
+    </qresource>
+</RCC>
