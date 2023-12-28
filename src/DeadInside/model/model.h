@@ -44,6 +44,7 @@
  * gif-animation (640x480, 10fps, 5s)
  */
 
+#include <array>
 #include <string>
 #include <vector>
 
@@ -51,10 +52,40 @@
 
 namespace s21 {
 
+enum Axis { kAxisX = 0, kAxisY = 1, kAxisZ = 2 };
+
+struct ObjectParameters {
+  void Init() {
+    translation = {0};
+    rotation = {0};
+    scale = 1;
+  }
+
+  std::array<double, 3> translation;
+  std::array<double, 3> rotation;
+  double scale;
+};
+
 class ModelHandler {
  public:
+  void LoadObject(const std::string& file);
+  const Object& GetObject() const noexcept;
+  void SetRotation(Axis axis, double angle) noexcept;
+  void SetTranslation(Axis axis, double shift) noexcept;
+  void SetScale(double scale) noexcept;
+
  private:
+  void CountNewPosition();
+  void TranslateObject(Axis axis, double shift);
+  void TranslateObject();
+  void RotateOxObject();
+  void RotateOyObject();
+  void RotateOzObject();
+  void ScaleObject();
+  void NormalizeObject();
   Object initialState_;
+  Object returnState_;
+  ObjectParameters params_;
   std::string file_;
 };
 
