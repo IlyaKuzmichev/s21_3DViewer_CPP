@@ -6,8 +6,9 @@
 
 #include "object.h"
 
+
 namespace s21 {
-    enum Axis { kAxisX = 0, kAxisY = 1, kAxisZ = 2 };
+    enum class Axis { kX = 0, kY = 1, kZ = 2 };
 
     class Viewer {
         public:

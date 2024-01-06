@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <utility>
 
+#include "exception.h"
 #include "object_builder.h"
 
 s21::ObjectBuilder& s21::ObjectBuilder::AddVertice(const s21::Vertice v) {
@@ -26,8 +27,8 @@ s21::Face s21::ObjectBuilder::ConvertRawFace(const s21::RawFace rf) {
 
     for (const auto& idx : rf.vertices_indices) {
         size_t real_idx = 0;
-        if (idx == 0 || (std::abs(idx) - 1) >= obj_.vertices.size()) {
-            throw std::out_of_range("vertice index is out of range");
+        if (idx == 0 || (static_cast<size_t>(std::abs(idx) - 1)) >= obj_.vertices.size()) {
+            throw Exception("vertice index is out of range");
         }
 
         if (idx < 0) {

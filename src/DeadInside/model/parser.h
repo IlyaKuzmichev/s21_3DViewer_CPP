@@ -1,39 +1,22 @@
-#ifndef SRC_MODEL_PARSER_H
-#define SRC_MODEL_PARSER_H
+#ifndef SRC_MODEL_PARSER_H_
+#define SRC_MODEL_PARSER_H_
 
-#include <cmath>
-#include <string>
-#include <vector>
+#include <istream>
+
+#include "object.h"
+#include "object_builder.h"
 
 namespace s21 {
 
-struct Object {
-  Object()
-      : facesCount(0),
-        xMin(INFINITY),
-        xMax(-INFINITY),
-        yMin(INFINITY),
-        yMax(-INFINITY) {}
+class ObjectParser {
+    public:
+        Object Parse(std::istream& input) const;
 
-  std::vector<double> vertices;
-  std::vector<int32_t> faces;
-  uint32_t facesCount;
-  double xMin, xMax, yMin, yMax;
+    private:
+        void ParseVertice(std::string& line, s21::ObjectBuilder& builder) const;
+        void ParseFace(std::string& line, s21::ObjectBuilder& builder) const;
 };
 
-class ObjectFileParser {
- public:
-  explicit ObjectFileParser(const std::string& file) : file_(file) {}
+}
 
-  Object ParseFile() const;
-
- private:
-  void AddVertice(Object& obj, std::string& str) const;
-  void AddFace(Object& obj, std::string& str) const;
-
-  std::string file_;
-};
-
-}  // namespace s21
-
-#endif  // SRC_MODEL_PARSER_H
+#endif  // SRC_MODEL_PARSER_H_
