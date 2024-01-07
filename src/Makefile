@@ -1,11 +1,11 @@
 CXX							= g++
-CXXFLAGS				= -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined -I DeadInside/
+CXXFLAGS				= -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined -I 3DReviewer/
 LDFLAGS					= -lgtest_main -lgtest -lpthread 
 VALGRIND_FLAGS	= --log-file="valgrind.txt" --track-origins=yes --trace-children=yes --leak-check=full --leak-resolution=med
 GCOVFLAGS 			= -fprofile-arcs -ftest-coverage
 
-PROJECT_DIR			= DeadInside/
-PROJECT 				= DeadInside
+PROJECT_DIR			= 3DReviewer/
+PROJECT 				= 3DReviewer
 
 MODEL_DIR 			= $(PROJECT_DIR)model/
 CONTROLLER_DIR	= $(PROJECT_DIR)controller/

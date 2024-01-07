@@ -5,7 +5,7 @@
 #include "viewer.h"
 #include "parser.h"
 
-int axisInt(s21::Axis axis) noexcept {
+int axisInt(s21::Viewer::Axis axis) noexcept {
     return static_cast<int>(axis);
 }
 

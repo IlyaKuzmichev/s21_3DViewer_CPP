@@ -13,7 +13,9 @@ struct Vertice {
 };
 
 struct Face {
-    std::vector<size_t> vertices_indices;
+    Face() = default;
+    Face(std::vector<std::size_t> vi) : vertices_indices(vi) {}
+    std::vector<std::size_t> vertices_indices;
 };
 
 struct Object {

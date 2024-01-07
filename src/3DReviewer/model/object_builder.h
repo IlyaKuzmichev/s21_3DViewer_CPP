@@ -1,6 +1,7 @@
 #ifndef SRC_MODEL_OBJECT_BUILDER_H_
 #define SRC_MODEL_OBJECT_BUILDER_H_
 
+#include <cstdint>
 #include <vector>
 
 #include "model/object.h"
@@ -8,6 +9,8 @@
 namespace s21 {
 
 struct RawFace {
+  RawFace() = default;
+  RawFace(std::vector<int32_t> vertices_indices) : vertices_indices(vertices_indices) {}
   std::vector<int32_t> vertices_indices;
 };
 
