@@ -31,19 +31,19 @@ const s21::Object& s21::Viewer::GetObject() const noexcept {
     return currentState_;
 }
 
-void s21::Viewer::SetRotation(Axis axis, double angle) noexcept {
-    params_.rotation[axisInt(axis)] = angle;
+void s21::Viewer::Rotate(Axis axis, double angle) noexcept {
+    params_.rotation[axisInt(axis)] += angle;
     RecountCurrentState();
 }
 
-void s21::Viewer::SetTranslation(Axis axis, double shift) noexcept {
-    TranslateObject(axis, shift - params_.translation[axisInt(axis)]);
-    params_.translation[axisInt(axis)] = shift;
+void s21::Viewer::Translate(Axis axis, double shift) noexcept {
+    TranslateObject(axis, shift);
+    params_.translation[axisInt(axis)] += shift;
 }
 
-void s21::Viewer::SetScale(double scale) noexcept {
+void s21::Viewer::Scale(double scale) noexcept {
     params_.scale = scale;
-    ScaleObject();
+    RecountCurrentState();
 }
 
 void s21::Viewer::RecountCurrentState() {

@@ -62,6 +62,7 @@ void s21::ObjectParser::ParseFace(std::string& line,
 
   if (stream >> idx) {
     f.vertices_indices.push_back(idx);
+    stream.ignore(kStreamMaxSize, ' ');
   } else {
     throw Exception("Empty face");
   }

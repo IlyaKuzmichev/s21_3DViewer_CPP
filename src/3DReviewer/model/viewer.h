@@ -14,9 +14,9 @@ class Viewer {
 
   void LoadObject(const std::string& filepath);
   const Object& GetObject() const noexcept;
-  void SetRotation(Axis axis, double angle) noexcept;
-  void SetTranslation(Axis axis, double shift) noexcept;
-  void SetScale(double scale) noexcept;
+  void Rotate(Axis axis, double angle) noexcept;
+  void Translate(Axis axis, double shift) noexcept;
+  void Scale(double scale) noexcept;
 
  private:
   void RecountCurrentState();
