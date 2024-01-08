@@ -4,18 +4,19 @@
 #include <array>
 #include <string>
 
-#include "object.h"
+#include "model/object.h"
+#include "model/transformer.h"
 
 namespace s21 {
 class Viewer {
  public:
-  enum class Axis { kX = 0, kY = 1, kZ = 2 };
+  using Axis = Transformer::Axis;
 
   void LoadObject(const std::string& filepath);
   const Object& GetObject() const noexcept;
-  void SetRotation(Axis axis, double angle) noexcept;
-  void SetTranslation(Axis axis, double shift) noexcept;
-  void SetScale(double scale) noexcept;
+  void Rotate(Axis axis, double angle) noexcept;
+  void Translate(Axis axis, double shift) noexcept;
+  void Scale(double scale) noexcept;
 
  private:
   void RecountCurrentState();
@@ -42,6 +43,7 @@ class Viewer {
   Object currentState_;
   ObjectParameters params_;
   std::string current_file_;
+  Transformer transformer_;
 };
 }  // namespace s21
 
