@@ -41,8 +41,8 @@ void s21::Transformer::RotateOxObject(s21::Object& obj, double angle) noexcept {
     for (auto& v : obj.vertices) {
         double y = v.coords[axisInt(Axis::kY)];
         double z = v.coords[axisInt(Axis::kZ)];
-        v.coords[axisInt(Axis::kY)] = y * angle_cos - z * angle_sin;
-        v.coords[axisInt(Axis::kZ)] = y * angle_sin + z * angle_cos;
+        v.coords[axisInt(Axis::kY)] = y * angle_cos + z * angle_sin;
+        v.coords[axisInt(Axis::kZ)] = - y * angle_sin + z * angle_cos;
     }
 }
 
@@ -53,7 +53,7 @@ void s21::Transformer::RotateOyObject(s21::Object& obj, double angle) noexcept {
         double x = v.coords[axisInt(Axis::kX)];
         double z = v.coords[axisInt(Axis::kZ)];
         v.coords[axisInt(Axis::kX)] = x * angle_cos + z * angle_sin;
-        v.coords[axisInt(Axis::kZ)] = -x * angle_sin + z * angle_cos;
+        v.coords[axisInt(Axis::kZ)] = - x * angle_sin + z * angle_cos;
 
     }
 }
@@ -64,7 +64,7 @@ void s21::Transformer::RotateOzObject(s21::Object& obj, double angle) noexcept {
     for (auto& v : obj.vertices) {
         double x = v.coords[axisInt(Axis::kX)];
         double y = v.coords[axisInt(Axis::kY)];
-        v.coords[axisInt(Axis::kX)] = x * angle_cos - y * angle_sin;
-        v.coords[axisInt(Axis::kY)] = x * angle_sin + y * angle_cos;
+        v.coords[axisInt(Axis::kX)] = x * angle_cos + y * angle_sin;
+        v.coords[axisInt(Axis::kY)] = - x * angle_sin + y * angle_cos;
     }
 }
