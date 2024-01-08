@@ -6,9 +6,9 @@
 
 namespace s21 {
 
-struct Vertice {
-    Vertice() : coords({0, 0, 0}) {}
-    Vertice(double x, double y, double z) : coords({x, y, z}) {}
+struct Vertex {
+    Vertex() : coords({0, 0, 0}) {}
+    Vertex(double x, double y, double z) : coords({x, y, z}) {}
     std::array<double, 3> coords;
 };
 
@@ -21,7 +21,7 @@ struct Face {
 struct Object {
     Object() {}
 
-    std::vector<Vertice> vertices;
+    std::vector<Vertex> vertices;
     std::vector<Face> faces;
 };
 

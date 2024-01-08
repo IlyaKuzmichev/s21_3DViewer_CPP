@@ -6,7 +6,7 @@
 
 #include "model/exception.h"
 
-s21::ObjectBuilder& s21::ObjectBuilder::AddVertice(const s21::Vertice v) {
+s21::ObjectBuilder& s21::ObjectBuilder::AddVertice(const s21::Vertex v) {
   obj_.vertices.push_back(v);
   return *this;
 }

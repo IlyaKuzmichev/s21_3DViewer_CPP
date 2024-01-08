@@ -3,12 +3,13 @@
 
 #include <QButtonGroup>
 #include <QMainWindow>
-#include <vector>
 #include <cstdint>
+#include <vector>
 
+#include "controller/viewer_controller.h"
 #include "view/coloradapter.h"
-#include "view/lineeditadapter.h"
-#include "view/scrollbaradapter.h"
+#include "view/lineedit_adapter.h"
+#include "view/scrollbar_adapter.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -16,15 +17,16 @@ class View;
 }
 QT_END_NAMESPACE
 
+namespace s21 {
 class View : public QMainWindow {
   Q_OBJECT
 
  public:
-  View(QWidget *parent = nullptr);
+  View(ViewerController* controller, QWidget *parent = nullptr);
   ~View();
 
  signals:
-  void repaintObject();
+  void repaintObject(const s21::ViewerController::Object* object, bool fullRepaint);
   void updateWidget();
 
  private slots:
@@ -40,6 +42,7 @@ class View : public QMainWindow {
   void onRadioButtonDisplayPressed(int value);
   void on_slider_size_valueChanged(int value);
   void on_action_image_triggered();
+  void updateParams(int);
   // void on_action_GIF_triggered();
   // void saveGifFrame();
 
@@ -52,6 +55,7 @@ class View : public QMainWindow {
   void groupButtons();
 
   Ui::View *ui;
+  s21::ViewerController *controller_;
   std::vector<std::unique_ptr<ScrollBarAdapter>> scrollBarAdapters;
   std::vector<std::unique_ptr<LineEditAdapter>> lineEditAdapters;
   std::vector<std::unique_ptr<ColorAdapter>> colorAdapters;
@@ -60,4 +64,6 @@ class View : public QMainWindow {
   QTimer *timer = nullptr;
   uint8_t frame_counter = 0;
 };
+
+}  // namespace s21
 #endif  // VIEW_H

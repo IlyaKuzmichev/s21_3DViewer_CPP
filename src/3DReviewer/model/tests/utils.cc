@@ -13,7 +13,7 @@ bool are_numbers_equal(const double a, const double b) {
     return std::fabs(a - b) < kEpsilon;
 }
 
-bool are_vertices_equal(const s21::Vertice& a, const s21::Vertice& b) {
+bool are_vertices_equal(const s21::Vertex& a, const s21::Vertex& b) {
     return are_numbers_equal(a.coords[0], b.coords[0]) &&
         are_numbers_equal(a.coords[1], b.coords[1]) &&
         are_numbers_equal(a.coords[2], b.coords[2]); 
@@ -76,7 +76,7 @@ void PrintTo(const TestableObject& obj, std::ostream* os) {
 
 }
 
-s21::Object s21test::ConstructTestCube(std::array<s21::Vertice, 8> vertices) {
+s21::Object s21test::ConstructTestCube(std::array<s21::Vertex, 8> vertices) {
     s21::ObjectBuilder builder;
     for (auto v : vertices) {
         builder.AddVertice(v);
@@ -97,7 +97,7 @@ s21::Object s21test::ConstructTestCube(std::array<s21::Vertice, 8> vertices) {
 }
 
 s21::Object s21test::ConstructBasicTestCube() {
-    std::array<s21::Vertice, 8> vertices({
+    std::array<s21::Vertex, 8> vertices({
                                     s21::Vertice(1., 1., 0.),
                                     s21::Vertice(-1., 1., 0.),
                                     s21::Vertice(-1., -1., 0.),

@@ -28,7 +28,7 @@ TEST(ParserTest, SingleVertice) {
     s21test::TestableObject obj(parser.Parse(stream));
 
     s21::ObjectBuilder builder;
-    builder.AddVertice(s21::Vertice(5.3, 1.2, 3.4));
+    builder.AddVertice(s21::Vertex(5.3, 1.2, 3.4));
 
     s21test::TestableObject expected(builder.Build());
 
@@ -54,14 +54,14 @@ TEST(ParserTest, MultipleVertices) {
     s21test::TestableObject obj(parser.Parse(stream));
 
     s21::ObjectBuilder builder;
-    builder.AddVertice(s21::Vertice(23.2, 42.4, 54.3));
-    builder.AddVertice(s21::Vertice(0.2312, 0.45, -15.3));
-    builder.AddVertice(s21::Vertice(53.2, 23.4, 66.7));
-    builder.AddVertice(s21::Vertice(15.23, 0.42, -124.45));
-    builder.AddVertice(s21::Vertice(23.44, 54.21, 0.32));
-    builder.AddVertice(s21::Vertice(0.25, 0.13, 0.1));
-    builder.AddVertice(s21::Vertice(-1, -2, -3));
-    builder.AddVertice(s21::Vertice(-3, -4, -5));
+    builder.AddVertice(s21::Vertex(23.2, 42.4, 54.3));
+    builder.AddVertice(s21::Vertex(0.2312, 0.45, -15.3));
+    builder.AddVertice(s21::Vertex(53.2, 23.4, 66.7));
+    builder.AddVertice(s21::Vertex(15.23, 0.42, -124.45));
+    builder.AddVertice(s21::Vertex(23.44, 54.21, 0.32));
+    builder.AddVertice(s21::Vertex(0.25, 0.13, 0.1));
+    builder.AddVertice(s21::Vertex(-1, -2, -3));
+    builder.AddVertice(s21::Vertex(-3, -4, -5));
 
     s21test::TestableObject expected(builder.Build());
 

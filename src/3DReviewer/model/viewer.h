@@ -3,6 +3,7 @@
 
 #include <array>
 #include <string>
+#include <unordered_map>
 
 #include "model/object.h"
 #include "model/transformer.h"
@@ -14,9 +15,14 @@ class Viewer {
 
   void LoadObject(const std::string& filepath);
   const Object& GetObject() const noexcept;
-  void Rotate(Axis axis, double angle) noexcept;
-  void Translate(Axis axis, double shift) noexcept;
-  void Scale(double scale) noexcept;
+
+  void SetRotation(Axis axis, double angle) noexcept;
+  void SetTranslation(Axis axis, double shift) noexcept;
+  void SetScale(double scale) noexcept;
+
+  double GetTranslation(Axis axis) const noexcept;
+  double GetRotation(Axis axis) const noexcept;
+  double GetScale() const noexcept;
 
  private:
   void RecountCurrentState();

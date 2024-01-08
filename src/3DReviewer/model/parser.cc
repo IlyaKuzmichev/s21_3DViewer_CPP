@@ -46,7 +46,7 @@ void s21::ObjectParser::ParseVertice(std::string& line,
   std::istringstream stream(line);
   char skip;
   if (stream >> skip >> x >> y >> z) {
-    builder.AddVertice(s21::Vertice(x, y, z));
+    builder.AddVertice(s21::Vertex(x, y, z));
   } else {
     throw Exception("Not valid object file!");
   }

@@ -18,7 +18,7 @@ class ObjectBuilder {
  public:
   ObjectBuilder() : obj_() {}
 
-  ObjectBuilder& AddVertice(const Vertice v);
+  ObjectBuilder& AddVertice(const Vertex v);
   ObjectBuilder& AddRawFace(const RawFace f);
   Object Build() noexcept;
 

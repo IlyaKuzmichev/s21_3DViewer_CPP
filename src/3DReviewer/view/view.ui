@@ -38,7 +38,7 @@
    <string>Grinch Pohititel Rozhdestva</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="GLWidget" name="RendererWidget">
+   <widget class="s21::GLWidget" name="RendererWidget">
     <property name="geometry">
      <rect>
       <x>650</x>
@@ -1000,7 +1000,7 @@
      <x>0</x>
      <y>0</y>
      <width>1900</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSave_as">
@@ -1032,7 +1032,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GLWidget</class>
+   <class>s21::GLWidget</class>
    <extends>QOpenGLWidget</extends>
    <header location="global">view/glwidget.h</header>
   </customwidget>

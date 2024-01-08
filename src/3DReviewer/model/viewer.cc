@@ -31,17 +31,26 @@ const s21::Object& s21::Viewer::GetObject() const noexcept {
     return currentState_;
 }
 
-void s21::Viewer::Rotate(Axis axis, double angle) noexcept {
-    params_.rotation[axisInt(axis)] += angle;
+void s21::Viewer::SetRotation(Axis axis, double angle) noexcept {
+    if (params_.rotation[axisInt(axis)] == angle) {
+        return;
+    }
+    params_.rotation[axisInt(axis)] = angle;
     RecountCurrentState();
 }
 
-void s21::Viewer::Translate(Axis axis, double shift) noexcept {
+void s21::Viewer::SetTranslation(Axis axis, double shift) noexcept {
+    if (params_.translation[axisInt(axis)] == shift) {
+        return;
+    }
     TranslateObject(axis, shift);
-    params_.translation[axisInt(axis)] += shift;
+    params_.translation[axisInt(axis)] = shift;
 }
 
-void s21::Viewer::Scale(double scale) noexcept {
+void s21::Viewer::SetScale(double scale) noexcept {
+    if (params_.scale == scale) {
+        return;
+    }
     params_.scale = scale;
     RecountCurrentState();
 }
@@ -56,7 +65,7 @@ void s21::Viewer::RecountCurrentState() {
 }
 
 void s21::Viewer::TranslateObject(Axis axis, double shift) {
-    transformer_.TranslateObject(currentState_, axis, shift);
+    transformer_.TranslateObject(currentState_, axis, shift - params_.translation[axisInt(axis)]);
 }
 
 void s21::Viewer::TranslateObject() {
@@ -82,4 +91,16 @@ void s21::Viewer::RotateOzObject() {
 
 void s21::Viewer::ScaleObject() {
     transformer_.ScaleObject(currentState_, params_.scale);
+}
+
+double s21::Viewer::GetTranslation(Axis axis) const noexcept {
+    return params_.translation[axisInt(axis)];
+}
+
+double s21::Viewer::GetRotation(Axis axis) const noexcept {
+    return params_.rotation[axisInt(axis)];
+}
+
+double s21::Viewer::GetScale() const noexcept {
+    return params_.scale;
 }

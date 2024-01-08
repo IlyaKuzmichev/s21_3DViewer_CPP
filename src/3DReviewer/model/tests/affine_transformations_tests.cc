@@ -11,7 +11,7 @@
 TEST(AffineTransformationsTest, MoveX) {
     double shift = 5.;
 
-    std::array<s21::Vertice, 8> expected_vertices({
+    std::array<s21::Vertex, 8> expected_vertices({
                                   s21::Vertice(1 + shift, 1., 0.),
                                   s21::Vertice(-1 + shift, 1., 0.),
                                   s21::Vertice(-1 + shift, -1., 0.),
@@ -34,7 +34,7 @@ TEST(AffineTransformationsTest, MoveX) {
 TEST(AffineTransformationsTest, MoveY) {
     double shift = -3.;
 
-    std::array<s21::Vertice, 8> expected_vertices({
+    std::array<s21::Vertex, 8> expected_vertices({
                                   s21::Vertice(1, 1. + shift, 0.),
                                   s21::Vertice(-1, 1. + shift, 0.),
                                   s21::Vertice(-1, -1. + shift, 0.),
@@ -57,7 +57,7 @@ TEST(AffineTransformationsTest, MoveY) {
 TEST(AffineTransformationsTest, MoveZ) {
     double shift = 16.;
 
-    std::array<s21::Vertice, 8> expected_vertices({
+    std::array<s21::Vertex, 8> expected_vertices({
                                   s21::Vertice(1, 1., 0. + shift),
                                   s21::Vertice(-1, 1., 0. + shift),
                                   s21::Vertice(-1, -1., 0. + shift),
@@ -80,7 +80,7 @@ TEST(AffineTransformationsTest, MoveZ) {
 TEST(AffineTransformationsTest, RotateX) {
     double angle = M_PI_2;
 
-    std::array<s21::Vertice, 8> expected_vertices({
+    std::array<s21::Vertex, 8> expected_vertices({
                                   s21::Vertice(1, 0., -1.),
                                   s21::Vertice(-1, 0., -1.),
                                   s21::Vertice(-1, 0., 1.),
@@ -103,7 +103,7 @@ TEST(AffineTransformationsTest, RotateX) {
 TEST(AffineTransformationsTest, RotateY) {
     double angle = M_PI;
 
-    std::array<s21::Vertice, 8> expected_vertices({
+    std::array<s21::Vertex, 8> expected_vertices({
                                   s21::Vertice(-1, 1., 0.),
                                   s21::Vertice(1, 1., 0.),
                                   s21::Vertice(1, -1., 0.),
@@ -126,7 +126,7 @@ TEST(AffineTransformationsTest, RotateY) {
 TEST(AffineTransformationsTest, RotateZ) {
     double angle = M_PI_4;
 
-    std::array<s21::Vertice, 8> expected_vertices({
+    std::array<s21::Vertex, 8> expected_vertices({
                                   s21::Vertice(M_SQRT2, 0., 0.),
                                   s21::Vertice(0, M_SQRT2, 0.),
                                   s21::Vertice(-M_SQRT2, 0., 0.),
@@ -149,7 +149,7 @@ TEST(AffineTransformationsTest, RotateZ) {
 TEST(AffineTransformationsTest, Scale) {
     double scale = 10000.;
 
-    std::array<s21::Vertice, 8> expected_vertices({
+    std::array<s21::Vertex, 8> expected_vertices({
                                   s21::Vertice(scale, scale, 0.),
                                   s21::Vertice(-scale, scale, 0.),
                                   s21::Vertice(-scale, -scale, 0.),

@@ -1,4 +1,4 @@
-#include "scrollbaradapter.h"
+#include "scrollbar_adapter.h"
 
 #include <QLineEdit>
 

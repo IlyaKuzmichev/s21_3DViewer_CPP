@@ -17,7 +17,7 @@ class TestableObject : public s21::Object {
         friend void PrintTo(const TestableObject& obj, std::ostream* os);
 };
 
-s21::Object ConstructTestCube(std::array<s21::Vertice, 8> vertices);
+s21::Object ConstructTestCube(std::array<s21::Vertex, 8> vertices);
 s21::Object ConstructBasicTestCube();
 
 

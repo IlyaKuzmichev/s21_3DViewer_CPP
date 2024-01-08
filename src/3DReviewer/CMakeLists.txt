@@ -23,25 +23,28 @@ set(PROJECT_SOURCES
 
         view/coloradapter.cc
         view/coloradapter.h
-        view/lineeditadapter.cc
-        view/lineeditadapter.h
-        view/scrollbaradapter.cc
-        view/scrollbaradapter.h
+        view/lineedit_adapter.cc
+        view/lineedit_adapter.h
+        view/scrollbar_adapter.cc
+        view/scrollbar_adapter.h
         view/glwidget.h
         view/glwidget.cc
         view/view.cc
         view/view.h
         view/view.ui
 
-        model/exception.h
+        controller/viewer_controller.h
+
         model/object_builder.cc
         model/parser.cc
         model/viewer.cc
+        model/transformer.cc
         model/object.h
         model/object_builder.h
         model/parser.h
         model/viewer.h
-
+        model/transformer.h
+        model/exception.h
 
 )
 

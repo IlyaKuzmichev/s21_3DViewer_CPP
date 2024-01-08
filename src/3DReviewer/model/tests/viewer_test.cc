@@ -27,13 +27,14 @@ TEST(ViewerTest, TranslateCube) {
 
     s21test::TestableObject expected(obj);
     
-    viewer.Translate(s21::Viewer::Axis::kX, 2.);
-    viewer.Translate(s21::Viewer::Axis::kY, 2.);
-    viewer.Translate(s21::Viewer::Axis::kX, -2.);
-    viewer.Translate(s21::Viewer::Axis::kY, -2.);
-    viewer.Translate(s21::Viewer::Axis::kZ, 3.);
-    viewer.Translate(s21::Viewer::Axis::kZ, -2.);
-    viewer.Translate(s21::Viewer::Axis::kZ, -1.);
+    viewer.SetTranslation(s21::Viewer::Axis::kX, 2.);
+    viewer.SetTranslation(s21::Viewer::Axis::kY, 2.);
+    viewer.SetTranslation(s21::Viewer::Axis::kX, 0);
+    viewer.SetTranslation(s21::Viewer::Axis::kY, 0);
+    viewer.SetTranslation(s21::Viewer::Axis::kZ, 3.);
+    viewer.SetTranslation(s21::Viewer::Axis::kZ, -2.);
+    viewer.SetTranslation(s21::Viewer::Axis::kZ, -1.);
+    viewer.SetTranslation(s21::Viewer::Axis::kZ, 0);
 
     EXPECT_EQ(expected, s21test::TestableObject(viewer.GetObject()));
 }
@@ -47,12 +48,15 @@ TEST(ViewerTest, RotateCube) {
 
     s21test::TestableObject expected(obj);
     
-    viewer.Rotate(s21::Viewer::Axis::kX, M_PI / 2);
-    viewer.Rotate(s21::Viewer::Axis::kX, 3 * M_PI / 2);
-    viewer.Rotate(s21::Viewer::Axis::kY, -M_PI);
-    viewer.Rotate(s21::Viewer::Axis::kY, -M_PI);
-    viewer.Rotate(s21::Viewer::Axis::kZ, 3 * M_PI);
-    viewer.Rotate(s21::Viewer::Axis::kZ, -5 * M_PI);
+    viewer.SetRotation(s21::Viewer::Axis::kX, M_PI / 2);
+    viewer.SetRotation(s21::Viewer::Axis::kX, 3 * M_PI / 2);
+    viewer.SetRotation(s21::Viewer::Axis::kX, 0);
+    viewer.SetRotation(s21::Viewer::Axis::kY, -M_PI);
+    viewer.SetRotation(s21::Viewer::Axis::kY, -M_PI);
+    viewer.SetRotation(s21::Viewer::Axis::kY, 0);
+    viewer.SetRotation(s21::Viewer::Axis::kZ, 3 * M_PI);
+    viewer.SetRotation(s21::Viewer::Axis::kZ, -5 * M_PI);
+    viewer.SetRotation(s21::Viewer::Axis::kZ, 0.);
     
     EXPECT_EQ(expected, s21test::TestableObject(viewer.GetObject()));
 }
@@ -68,10 +72,10 @@ TEST(ViewerTest, ScaleCube) {
     s21::Transformer transformer;
     transformer.ScaleObject(expected, 10);
     
-    viewer.Scale(2.);
-    viewer.Scale(0.5);
-    viewer.Scale(0.1);
-    viewer.Scale(10);
+    viewer.SetScale(2.);
+    viewer.SetScale(0.5);
+    viewer.SetScale(0.1);
+    viewer.SetScale(10);
         
     EXPECT_EQ(expected, s21test::TestableObject(viewer.GetObject()));
 }

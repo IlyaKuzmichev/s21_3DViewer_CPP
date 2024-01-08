@@ -1,6 +1,8 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
+#define GL_SILENCE_DEPRECATION
+
 #include <QObject>
 #include <QWidget>
 
@@ -14,6 +16,10 @@
 #include <QOpenGLWidget>
 #include <QWheelEvent>
 #include <QtMath>
+
+#include "controller/viewer_controller.h"
+
+namespace s21 {
 
 enum DisplayMethod { none = 0, circle, square };
 
@@ -34,17 +40,26 @@ class GLWidget : public QOpenGLWidget {
  public:
   GLWidget(QWidget *parent = nullptr);
   ~GLWidget() {}
-  void loadNewModel(const QString filename);
-  GLSettings WidgetSettings;
+  GLSettings widget_settings;
 
  private:
   QPoint lastPos;
+
+  GLuint vertex_buffer_;
+  GLuint face_buffer_;
+
+  size_t vertices_arr_size_;
+  size_t faces_arr_size_;
+  static constexpr GLuint faces_separator_ = 0xFFFF;
+
+
   void setProjection();
   void drawVertices();
   void drawEdges();
 
  public slots:
   void updateFrame();
+  void repaintObject(const s21::ViewerController::Object* obj, bool fullRepaint);
 
  signals:
   void mouseTrigger(double x, double y);
@@ -59,6 +74,9 @@ class GLWidget : public QOpenGLWidget {
   void mouseMoveEvent(QMouseEvent *event) override;
   void wheelEvent(QWheelEvent *event) override;
 };
+
+}  // namespace s21
+
 
 
 #endif // GLWIDGET_H

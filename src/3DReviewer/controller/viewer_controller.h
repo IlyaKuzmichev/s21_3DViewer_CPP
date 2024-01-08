@@ -10,6 +10,8 @@ namespace s21 {
   class ViewerController {
     public:
       using Axis = Viewer::Axis;
+      using Object = Object;
+      using Vertex = Vertex;
 
       explicit ViewerController(Viewer* viewer) : viewer_(viewer) {}
 
@@ -26,18 +28,30 @@ namespace s21 {
       }
 
       void SetTranslation(Axis axis, double shift) noexcept {
-        viewer_->SetRotation(axis, shift);
+        viewer_->SetTranslation(axis, shift);
       }
 
       void SetScale(double scale) noexcept {
         viewer_->SetScale(scale);
       }
 
+      double GetTranslation(Axis axis) const noexcept {
+        return  viewer_->GetTranslation(axis);
+      }
+
+      double GetRotation(Axis axis) const noexcept {
+        return viewer_->GetRotation(axis);
+      }
+
+      double GetScale() const noexcept {
+        return viewer_->GetScale();
+      }
+
     private:
       Viewer* viewer_;
-  }
+  };
 
 
-}
+}  // namespace s21
 
 #endif  // SRC_CONTROLLER_VIEWER_CONTROLLER_H_
