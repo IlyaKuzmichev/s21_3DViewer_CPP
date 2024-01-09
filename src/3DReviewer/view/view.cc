@@ -23,9 +23,9 @@ s21::View::View(ViewerController* controller, QWidget* parent) : QMainWindow(par
   connect(timer, SIGNAL(timeout()), this, SLOT(saveGifFrame()));
   connect(ui->scroll_scale, SIGNAL(valueChanged(int)), this,
           SLOT(updateParams(int)));
-  connect(this, SIGNAL(repaintObject(const s21::ViewerController::Object*, bool)),
+  connect(this, SIGNAL(repaintObject(const s21::ViewerController::Object*,bool)),
     ui->RendererWidget,
-          SLOT(repaintObject(const s21::ViewerController::Object*, bool)));
+          SLOT(repaintObject(const s21::ViewerController::Object*,bool)));
   connect(ui->RendererWidget, &GLWidget::mouseTrigger, this,
           &s21::View::setMouseRotation);
   connect(ui->RendererWidget, &GLWidget::wheelTrigger, this,

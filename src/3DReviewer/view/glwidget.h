@@ -51,6 +51,8 @@ class GLWidget : public QOpenGLWidget {
   size_t vertices_arr_size_;
   size_t faces_arr_size_;
   static constexpr GLuint faces_separator_ = 0xFFFF;
+  std::vector<int> all_indices_;
+  std::vector<Vertex> vertices_;
 
 
   void setProjection();

@@ -11,12 +11,12 @@ s21::GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), vertices_arr_s
 void s21::GLWidget::initializeGL() {
     glEnable(GL_DEPTH_TEST);
 
-    glGenBuffers(1, &vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+//    glGenBuffers(1, &vertex_buffer_);
+//    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
 //    glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
 
-    glGenBuffers(1, &face_buffer_);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, face_buffer_);
+//    glGenBuffers(1, &face_buffer_);
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, face_buffer_);
 //    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
 }
 
@@ -33,6 +33,9 @@ void s21::GLWidget::paintGL() {
                widget_settings.bg_colour.blueF(), 1.0f);
   glClear(GL_COLOR_BUFFER_BIT |
           GL_DEPTH_BUFFER_BIT);  // очистка буфера изображения и глубины
+  if (vertices_.size() == 0) {
+      return;
+  }
   drawVertices();
   drawEdges();
 
@@ -46,35 +49,49 @@ void s21::GLWidget::drawVertices() {
         return;
     }
 
+    glVertexPointer(3, GL_DOUBLE, 0, &vertices_[0]);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
     if (widget_settings.vertices_type == DisplayMethod::circle) {
         glEnable(GL_POINT_SMOOTH);
     } else {
         glDisable(GL_POINT_SMOOTH);
     }
-
     glPointSize(widget_settings.vertices_size);
     glColor3d(widget_settings.vertices_colour.redF(), widget_settings.vertices_colour.greenF(), widget_settings.vertices_colour.blueF());
 
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, sizeof(Vertex), 0);
+//    glEnableVertexAttribArray(0);
+//    glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, sizeof(Vertex), 0);
     qDebug() << vertices_arr_size_ << '\n';
     glDrawArrays(GL_POINTS, 0, vertices_arr_size_);
+    glDisableClientState(GL_VERTEX_ARRAY);
 
-
-    glDisableVertexAttribArray(0);
+//    glDisableVertexAttribArray(0);
 }
 
 void s21::GLWidget::drawEdges() {
+    glLineWidth(widget_settings.edges_thickness);
+    glLineStipple(1, 0x00F0);
+    glColor3d(widget_settings.edges_colour.redF(),
+                widget_settings.edges_colour.greenF(),
+                widget_settings.edges_colour.blueF());
+    if (widget_settings.is_edges_solid) {
+      glDisable(GL_LINE_STIPPLE);
+    } else {
+      glEnable(GL_LINE_STIPPLE);
+    }
+
     glEnable(GL_PRIMITIVE_RESTART);
     glPrimitiveRestartIndex(faces_separator_);
+    glVertexPointer(3, GL_DOUBLE, 0, &vertices_[0]);
+    glEnableClientState(GL_VERTEX_ARRAY);
 
-
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, face_buffer_);
-    glDrawElements(GL_TRIANGLE_FAN, faces_arr_size_, GL_UNSIGNED_INT, 0);
-
+    if (all_indices_.size()) {
+        glDrawElements(GL_TRIANGLE_FAN, faces_arr_size_, GL_INT, &all_indices_[0]);
+    }
     glDisable(GL_PRIMITIVE_RESTART);
+    glDisableClientState(GL_VERTEX_ARRAY);
+
 }
 
 void s21::GLWidget::mousePressEvent(QMouseEvent* event) { lastPos = event->pos(); }
@@ -111,20 +128,14 @@ void s21::GLWidget::updateFrame() { update(); }
 
 void s21::GLWidget::repaintObject(const s21::ViewerController::Object* obj, bool fullRepaint) {
     if (fullRepaint) {
-        vertices_arr_size_ = obj->vertices.size() / 3;
-        glBufferData(vertex_buffer_, obj->vertices.size() * sizeof(double) * 3, &obj->vertices[0], GL_STATIC_DRAW);
-
-        std::vector<int> all_indices;
+        vertices_arr_size_ = obj->vertices.size();
+        all_indices_.clear();
         for (const auto& f : obj->faces) {
-            all_indices.insert(all_indices.end(), f.vertices_indices.begin(), f.vertices_indices.end());
-            all_indices.push_back(faces_separator_);
+            all_indices_.insert(all_indices_.end(), f.vertices_indices.begin(), f.vertices_indices.end());
+            all_indices_.push_back(faces_separator_);
         }
-
-        faces_arr_size_ = all_indices.size();
-        glBufferData(face_buffer_, all_indices.size() * sizeof(int), &all_indices[0], GL_STATIC_DRAW);
-    } else {
-        glBufferSubData(vertex_buffer_, 0, obj->vertices.size() * sizeof(double) * 3, &obj->vertices[0]);
+        faces_arr_size_ = all_indices_.size();
     }
-
+    vertices_ = obj->vertices;
     update();
 }
