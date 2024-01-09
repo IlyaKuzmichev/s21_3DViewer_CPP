@@ -3,18 +3,16 @@
 
 #define GL_SILENCE_DEPRECATION
 
-#include <QObject>
-#include <QWidget>
-
-
 #include <QColor>
 #include <QLineEdit>
 #include <QMouseEvent>
+#include <QObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLFunctions>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLWidget>
 #include <QWheelEvent>
+#include <QWidget>
 #include <QtMath>
 
 #include "controller/viewer_controller.h"
@@ -23,7 +21,7 @@ namespace s21 {
 
 enum DisplayMethod { none = 0, circle, square };
 
-struct  GLSettings{
+struct GLSettings {
   QColor bg_colour;
   QColor edges_colour;
   QColor vertices_colour;
@@ -40,39 +38,38 @@ class GLWidget : public QOpenGLWidget {
  public:
   GLWidget(QWidget *parent = nullptr);
   ~GLWidget() {}
+
   GLSettings widget_settings;
 
- private:
-  QPoint lastPos;
+public slots:
+ void updateFrame();
+ void repaintObject(const s21::ViewerController::Object *obj,
+                    bool fullRepaint);
 
-  std::vector<uint32_t> faces_in_lines_;
-  const s21::ViewerController::Object* current_obj_;
-
-
-  void setProjection();
-  void drawVertices();
-  void drawEdges();
-
- public slots:
-  void updateFrame();
-  void repaintObject(const s21::ViewerController::Object* obj, bool fullRepaint);
-
- signals:
-  void mouseTrigger(double x, double y);
-  void wheelTrigger(int increase_scale);
-  void sendVF(uint64_t vertices, uint64_t faces);
+signals:
+ void mouseTrigger(double x, double y);
+ void wheelTrigger(int increase_scale);
+ void sendVF(uint64_t vertices, uint64_t faces);
 
  protected:
   void initializeGL() override;
   void paintGL() override;
-//  void resizeGL(int width, int height) override;
   void mousePressEvent(QMouseEvent *event) override;
   void mouseMoveEvent(QMouseEvent *event) override;
   void wheelEvent(QWheelEvent *event) override;
+
+ private:
+  void setProjection();
+  void drawVertices();
+  void drawEdges();
+
+  QPoint lastPos;
+  std::vector<uint32_t> faces_in_lines_;
+  const s21::ViewerController::Object *current_obj_;
+
+
 };
 
 }  // namespace s21
 
-
-
-#endif // GLWIDGET_H
+#endif  // GLWIDGET_H

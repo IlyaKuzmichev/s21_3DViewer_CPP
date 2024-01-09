@@ -2,94 +2,76 @@
 
 #include <QDebug>
 #include <QElapsedTimer>
+
 #include "controller/viewer_controller.h"
 
-s21::GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), current_obj_(nullptr) {
+s21::GLWidget::GLWidget(QWidget* parent)
+    : QOpenGLWidget(parent), current_obj_(nullptr) {}
 
-}
-
-void s21::GLWidget::initializeGL() {
-    glEnable(GL_DEPTH_TEST);
-
-//    glGenBuffers(1, &vertex_buffer_);
-//    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-//    glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
-
-//    glGenBuffers(1, &face_buffer_);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, face_buffer_);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
-}
-
-//void s21::GLWidget::resizeGL(int, int) {}
-
-#include <QDebug>
+void s21::GLWidget::initializeGL() { glEnable(GL_DEPTH_TEST); }
 
 void s21::GLWidget::paintGL() {
- QElapsedTimer debug;
+  QElapsedTimer debug;
   debug.start();
   setProjection();
   glClearColor(widget_settings.bg_colour.redF(),
                widget_settings.bg_colour.greenF(),
                widget_settings.bg_colour.blueF(), 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT |
-          GL_DEPTH_BUFFER_BIT);  // очистка буфера изображения и глубины
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   if (current_obj_ == nullptr || current_obj_->vertices.empty()) {
-      return;
+    return;
   }
   drawVertices();
   drawEdges();
-
-  qDebug() << "Sizes:" << current_obj_->vertices.size() << " " << faces_in_lines_.size() << '\n';
 
   qDebug() << "Time of drawing" << debug.elapsed()  << '\n';
 }
 
 void s21::GLWidget::drawVertices() {
-    if (widget_settings.vertices_type == DisplayMethod::none) {
-        return;
-    }
+  if (widget_settings.vertices_type == DisplayMethod::none) {
+    return;
+  }
 
-    glVertexPointer(3, GL_DOUBLE, 0, &current_obj_->vertices[0]);
-    glEnableClientState(GL_VERTEX_ARRAY);
+  if (widget_settings.vertices_type == DisplayMethod::circle) {
+    glEnable(GL_POINT_SMOOTH);
+  } else {
+    glDisable(GL_POINT_SMOOTH);
+  }
+  glPointSize(widget_settings.vertices_size);
+  glColor3d(widget_settings.vertices_colour.redF(),
+            widget_settings.vertices_colour.greenF(),
+            widget_settings.vertices_colour.blueF());
 
-    if (widget_settings.vertices_type == DisplayMethod::circle) {
-        glEnable(GL_POINT_SMOOTH);
-    } else {
-        glDisable(GL_POINT_SMOOTH);
-    }
-    glPointSize(widget_settings.vertices_size);
-    glColor3d(widget_settings.vertices_colour.redF(), widget_settings.vertices_colour.greenF(), widget_settings.vertices_colour.blueF());
+  glVertexPointer(3, GL_DOUBLE, 0, &current_obj_->vertices[0]);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glDrawArrays(GL_POINTS, 0, current_obj_->vertices.size());
 
-//    glEnableVertexAttribArray(0);
-//    glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, sizeof(Vertex), 0);
-//    qDebug() << vertices_arr_size_ << '\n';
-    glDrawArrays(GL_POINTS, 0, current_obj_->vertices.size());
-    glDisableClientState(GL_VERTEX_ARRAY);
-
-//    glDisableVertexAttribArray(0);
+  glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void s21::GLWidget::drawEdges() {
-    glLineWidth(widget_settings.edges_thickness);
-    glLineStipple(1, 0x00F0);
-    glColor3d(widget_settings.edges_colour.redF(),
-                widget_settings.edges_colour.greenF(),
-                widget_settings.edges_colour.blueF());
-    if (widget_settings.is_edges_solid) {
-      glDisable(GL_LINE_STIPPLE);
-    } else {
-      glEnable(GL_LINE_STIPPLE);
-    }
+  glLineWidth(widget_settings.edges_thickness);
+  glLineStipple(1, 0x00F0);
+  glColor3d(widget_settings.edges_colour.redF(),
+            widget_settings.edges_colour.greenF(),
+            widget_settings.edges_colour.blueF());
+  if (widget_settings.is_edges_solid) {
+    glDisable(GL_LINE_STIPPLE);
+  } else {
+    glEnable(GL_LINE_STIPPLE);
+  }
 
-    glVertexPointer(3, GL_DOUBLE, 0, &current_obj_->vertices[0]);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glDrawElements(GL_LINES, faces_in_lines_.size(), GL_UNSIGNED_INT, &faces_in_lines_[0]);
+  glVertexPointer(3, GL_DOUBLE, 0, &current_obj_->vertices[0]);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glDrawElements(GL_LINES, faces_in_lines_.size(), GL_UNSIGNED_INT,
+                 &faces_in_lines_[0]);
 
-    glDisableClientState(GL_VERTEX_ARRAY);
-
+  glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void s21::GLWidget::mousePressEvent(QMouseEvent* event) { lastPos = event->pos(); }
+void s21::GLWidget::mousePressEvent(QMouseEvent* event) {
+  lastPos = event->pos();
+}
 
 void s21::GLWidget::mouseMoveEvent(QMouseEvent* event) {
   double diff_x = event->pos().y() - lastPos.y();
@@ -107,32 +89,37 @@ void s21::GLWidget::wheelEvent(QWheelEvent* event) {
 }
 
 void s21::GLWidget::setProjection() {
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    GLfloat fov = 60.0 * M_PI / 180;
-    GLfloat near = 1 / tan(fov / 2);
-    if (widget_settings.is_parallel_projection) {
-      glOrtho(-2., 2., -2., 2., -50, 50.);
-    } else {
-      glFrustum(-0.5, 0.5, -0.5, 0.5, 0.9, 100.);
-      glTranslated(0, 0, -near * 3);
-    }
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  GLfloat fov = 60.0 * M_PI / 180;
+  GLfloat near = 1 / tan(fov / 2);
+  if (widget_settings.is_parallel_projection) {
+    glOrtho(-2., 2., -2., 2., -50, 50.);
+  } else {
+    glFrustum(-0.5, 0.5, -0.5, 0.5, 0.9, 100.);
+    glTranslated(0, 0, -near * 3);
+  }
 }
 
 void s21::GLWidget::updateFrame() { update(); }
 
-void s21::GLWidget::repaintObject(const s21::ViewerController::Object* obj, bool fullRepaint) {
-    if (fullRepaint) {
-        faces_in_lines_.clear();
-        for (const auto& f : obj->faces) {
-            faces_in_lines_.push_back(f.vertices_indices[0]);
-            for (size_t i = 1; i < f.vertices_indices.size(); ++i) {
-                faces_in_lines_.push_back(f.vertices_indices[i]);
-                faces_in_lines_.push_back(f.vertices_indices[i]);
-            }
-            faces_in_lines_.push_back(f.vertices_indices[0]);
-        }
-    }
+void s21::GLWidget::repaintObject(const s21::ViewerController::Object* obj,
+                                  bool fullRepaint) {
+  if (!fullRepaint) {
     current_obj_ = obj;
     update();
+    return;
+  }
+
+  faces_in_lines_.clear();
+  for (const auto& f : obj->faces) {
+    faces_in_lines_.push_back(f.vertices_indices[0]);
+    for (size_t i = 1; i < f.vertices_indices.size(); ++i) {
+      faces_in_lines_.push_back(f.vertices_indices[i]);
+      faces_in_lines_.push_back(f.vertices_indices[i]);
+    }
+    faces_in_lines_.push_back(f.vertices_indices[0]);
+  }
+
+  update();
 }
