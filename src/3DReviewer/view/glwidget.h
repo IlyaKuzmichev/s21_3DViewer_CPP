@@ -45,14 +45,8 @@ class GLWidget : public QOpenGLWidget {
  private:
   QPoint lastPos;
 
-  GLuint vertex_buffer_;
-  GLuint face_buffer_;
-
-  size_t vertices_arr_size_;
-  size_t faces_arr_size_;
-  static constexpr GLuint faces_separator_ = 0xFFFF;
-  std::vector<int> all_indices_;
-  std::vector<Vertex> vertices_;
+  std::vector<uint32_t> faces_in_lines_;
+  const s21::ViewerController::Object* current_obj_;
 
 
   void setProjection();

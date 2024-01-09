@@ -4,7 +4,7 @@
 #include <QElapsedTimer>
 #include "controller/viewer_controller.h"
 
-s21::GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), vertices_arr_size_(0), faces_arr_size_(0) {
+s21::GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), current_obj_(nullptr) {
 
 }
 
@@ -33,13 +33,13 @@ void s21::GLWidget::paintGL() {
                widget_settings.bg_colour.blueF(), 1.0f);
   glClear(GL_COLOR_BUFFER_BIT |
           GL_DEPTH_BUFFER_BIT);  // очистка буфера изображения и глубины
-  if (vertices_.size() == 0) {
+  if (current_obj_ == nullptr || current_obj_->vertices.empty()) {
       return;
   }
   drawVertices();
   drawEdges();
 
-  qDebug() << "Sizes:" << vertices_arr_size_ << " " << faces_arr_size_ << '\n';
+  qDebug() << "Sizes:" << current_obj_->vertices.size() << " " << faces_in_lines_.size() << '\n';
 
   qDebug() << "Time of drawing" << debug.elapsed()  << '\n';
 }
@@ -49,7 +49,7 @@ void s21::GLWidget::drawVertices() {
         return;
     }
 
-    glVertexPointer(3, GL_DOUBLE, 0, &vertices_[0]);
+    glVertexPointer(3, GL_DOUBLE, 0, &current_obj_->vertices[0]);
     glEnableClientState(GL_VERTEX_ARRAY);
 
     if (widget_settings.vertices_type == DisplayMethod::circle) {
@@ -62,8 +62,8 @@ void s21::GLWidget::drawVertices() {
 
 //    glEnableVertexAttribArray(0);
 //    glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, sizeof(Vertex), 0);
-    qDebug() << vertices_arr_size_ << '\n';
-    glDrawArrays(GL_POINTS, 0, vertices_arr_size_);
+//    qDebug() << vertices_arr_size_ << '\n';
+    glDrawArrays(GL_POINTS, 0, current_obj_->vertices.size());
     glDisableClientState(GL_VERTEX_ARRAY);
 
 //    glDisableVertexAttribArray(0);
@@ -81,15 +81,10 @@ void s21::GLWidget::drawEdges() {
       glEnable(GL_LINE_STIPPLE);
     }
 
-    glEnable(GL_PRIMITIVE_RESTART);
-    glPrimitiveRestartIndex(faces_separator_);
-    glVertexPointer(3, GL_DOUBLE, 0, &vertices_[0]);
+    glVertexPointer(3, GL_DOUBLE, 0, &current_obj_->vertices[0]);
     glEnableClientState(GL_VERTEX_ARRAY);
+    glDrawElements(GL_LINES, faces_in_lines_.size(), GL_UNSIGNED_INT, &faces_in_lines_[0]);
 
-    if (all_indices_.size()) {
-        glDrawElements(GL_TRIANGLE_FAN, faces_arr_size_, GL_INT, &all_indices_[0]);
-    }
-    glDisable(GL_PRIMITIVE_RESTART);
     glDisableClientState(GL_VERTEX_ARRAY);
 
 }
@@ -128,14 +123,16 @@ void s21::GLWidget::updateFrame() { update(); }
 
 void s21::GLWidget::repaintObject(const s21::ViewerController::Object* obj, bool fullRepaint) {
     if (fullRepaint) {
-        vertices_arr_size_ = obj->vertices.size();
-        all_indices_.clear();
+        faces_in_lines_.clear();
         for (const auto& f : obj->faces) {
-            all_indices_.insert(all_indices_.end(), f.vertices_indices.begin(), f.vertices_indices.end());
-            all_indices_.push_back(faces_separator_);
+            faces_in_lines_.push_back(f.vertices_indices[0]);
+            for (size_t i = 1; i < f.vertices_indices.size(); ++i) {
+                faces_in_lines_.push_back(f.vertices_indices[i]);
+                faces_in_lines_.push_back(f.vertices_indices[i]);
+            }
+            faces_in_lines_.push_back(f.vertices_indices[0]);
         }
-        faces_arr_size_ = all_indices_.size();
     }
-    vertices_ = obj->vertices;
+    current_obj_ = obj;
     update();
 }
