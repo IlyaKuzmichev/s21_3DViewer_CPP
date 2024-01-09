@@ -1,15 +1,19 @@
 #ifndef SRC_MODEL_OBJECT_H_
 #define SRC_MODEL_OBJECT_H_
 
-#include <array>
 #include <vector>
 
 namespace s21 {
 
 struct Vertex {
     Vertex() : coords({0, 0, 0}) {}
-    Vertex(double x, double y, double z) : coords({x, y, z}) {}
-    std::array<double, 3> coords;
+    Vertex(double x, double y, double z) {
+        coords.resize(3);
+        coords[0] = x;
+        coords[1] = y;
+        coords[2] = z;
+    }
+    std::vector<double> coords;
 };
 
 struct Face {

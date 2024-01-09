@@ -98,14 +98,14 @@ s21::Object s21test::ConstructTestCube(std::array<s21::Vertex, 8> vertices) {
 
 s21::Object s21test::ConstructBasicTestCube() {
     std::array<s21::Vertex, 8> vertices({
-                                    s21::Vertice(1., 1., 0.),
-                                    s21::Vertice(-1., 1., 0.),
-                                    s21::Vertice(-1., -1., 0.),
-                                    s21::Vertice(1., -1., 0.),
-                                    s21::Vertice(1., 1., 2.),
-                                    s21::Vertice(-1., 1., 2.),
-                                    s21::Vertice(-1., -1., 2.),
-                                    s21::Vertice(1., -1., 2.),
+                                    s21::Vertex(1., 1., 0.),
+                                    s21::Vertex(-1., 1., 0.),
+                                    s21::Vertex(-1., -1., 0.),
+                                    s21::Vertex(1., -1., 0.),
+                                    s21::Vertex(1., 1., 2.),
+                                    s21::Vertex(-1., 1., 2.),
+                                    s21::Vertex(-1., -1., 2.),
+                                    s21::Vertex(1., -1., 2.),
                                 });
     return ConstructTestCube(vertices);
 }

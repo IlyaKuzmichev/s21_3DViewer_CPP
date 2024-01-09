@@ -121,7 +121,7 @@ void s21::View::SaveSettings() {
 }
 
 void s21::View::LoadSettings() {
-  QSettings settings("Aboba Team", "3DViewer");
+  QSettings settings("Aboba Team", "3DReviewer");
   ui->RendererWidget->widget_settings.bg_colour =
       settings.value("bg_colour", QColor(Qt::white)).value<QColor>();
   ui->RendererWidget->widget_settings.edges_colour =
