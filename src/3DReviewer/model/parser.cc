@@ -40,6 +40,43 @@ s21::Object s21::ObjectParser::Parse(std::istream& input) const {
   return builder.Build();
 }
 
+//s21::Object s21::ObjectParser::Parse(std::istream& input) const {
+//  s21::ObjectBuilder builder;
+
+//  std::vector<char> buffer(kBufferSize);
+//  std::string leftover;
+
+//  while (input.read(buffer.data(), kBufferSize)) {
+//      size_t bytesRead = input.gcount();
+//      std::string data(leftover + buffer.data(), leftover.size() + bytesRead);
+//      leftover.clear();
+
+//    size_t lastNewline = data.find_last_of('\n');
+//    if (lastNewline != std::string::npos) {
+//      leftover = data.substr(lastNewline + 1);
+//      data = data.substr(0, lastNewline + 1);
+//    }
+
+//    ProcessStream(data, builder);
+//  }
+//  ProcessStream(leftover, builder);
+
+//  return builder.Build();
+//}
+
+//void s21::ObjectParser::ProcessStream(const std::string& data, s21::ObjectBuilder& builder) const {
+//    std::istringstream stream(data);
+//    std::string line;
+
+//    while (std::getline(stream, line)) {
+//      if (startsWith(line, "v ")) {
+//        ParseVertice(line, builder);
+//      } else if (startsWith(line, "f ")) {
+//        ParseFace(line, builder);
+//      }
+//    }
+//}
+
 void s21::ObjectParser::ParseVertice(std::string& line,
                                      s21::ObjectBuilder& builder) const {
   double x, y, z;

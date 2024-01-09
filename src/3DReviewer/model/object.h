@@ -6,14 +6,12 @@
 namespace s21 {
 
 struct Vertex {
-    Vertex() : coords({0, 0, 0}) {}
-    Vertex(double x, double y, double z) {
-        coords.resize(3);
-        coords[0] = x;
-        coords[1] = y;
-        coords[2] = z;
+    Vertex() : x(0), y(0), z(0) {}
+    Vertex(double x, double y, double z) : x(x), y(y), z(z) {
     }
-    std::vector<double> coords;
+    double x;
+    double y;
+    double z;
 };
 
 struct Face {
