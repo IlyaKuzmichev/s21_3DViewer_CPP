@@ -1,5 +1,7 @@
 #include <cmath>
+#include <sstream>
 #include <fstream>
+#include <vector>
 
 #include "exception.h"
 #include "viewer.h"
@@ -18,6 +20,15 @@ void s21::Viewer::LoadObject(const std::string& filepath) {
     if (!stream.is_open()) {
         throw Exception("Cringe");
     }
+
+//    stream.seekg(0, std::ios::end);
+//    size_t file_size = stream.tellg();
+//    stream.seekg(0, std::ios::beg);
+//    std::vector<char> data(file_size);
+//    stream.read(&data[0], file_size);
+
+//    std::string string_stream(data.begin(), data.end());
+//    std::istringstream file_data(string_stream);
 
     ObjectParser parser;
     current_file_ = filepath;
