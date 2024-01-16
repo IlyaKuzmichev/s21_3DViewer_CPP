@@ -11,7 +11,7 @@ namespace s21 {
 
 class ObjectParser {
     public:
-        Object Parse(std::istream& input) const;
+        Object Parse(FILE* f) const;
 
     private:
         void ParseVertice(std::string& line, s21::ObjectBuilder& builder) const;

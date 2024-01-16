@@ -16,8 +16,8 @@ void s21::Viewer::LoadObject(const std::string& filepath) {
         return;
     }
 
-    std::ifstream stream(filepath);
-    if (!stream.is_open()) {
+    FILE* f = fopen(filepath.c_str(), "r");
+    if (f == nullptr) {
         throw Exception("Cringe");
     }
 
@@ -32,7 +32,7 @@ void s21::Viewer::LoadObject(const std::string& filepath) {
 
     ObjectParser parser;
     current_file_ = filepath;
-    Object obj = parser.Parse(stream);
+    Object obj = parser.Parse(f);
     std::swap(obj, baseState_);
     params_.Init();
     currentState_ = baseState_;

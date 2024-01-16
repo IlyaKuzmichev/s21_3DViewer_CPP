@@ -1,15 +1,21 @@
 #include "parser.h"
 
+#include <stdio.h>
 #include <istream>
 #include <limits>
 #include <sstream>
 #include <string>
+
+#include <QDebug>
+#include <QString>
+#include <QElapsedTimer>
 
 #include "model/exception.h"
 #include "model/object.h"
 #include "model/object_builder.h"
 
 constexpr auto kStreamMaxSize = std::numeric_limits<std::streamsize>::max();
+constexpr uint32_t kStringSize = 1024U;
 
 bool startsWith(const std::string& str, const std::string& prefix) {
   if (prefix.size() > str.size()) {
@@ -25,18 +31,25 @@ bool startsWith(const std::string& str, const std::string& prefix) {
   return true;
 }
 
-s21::Object s21::ObjectParser::Parse(std::istream& input) const {
+s21::Object s21::ObjectParser::Parse(FILE* f) const {
+  QElapsedTimer debug;
+  debug.start();
   s21::ObjectBuilder builder;
-  std::string line;
+  char* line = NULL;
+  size_t linecap;
+  std::string str;
+  str.reserve(kStringSize);
 
-  while (std::getline(input, line)) {
-    if (startsWith(line, "v ")) {
-      ParseVertice(line, builder);
-    } else if (startsWith(line, "f ")) {
-      ParseFace(line, builder);
+  while (getline(&line, &linecap, f) > 0) {
+      str = line;
+      if (startsWith(str, "v ")) {
+        ParseVertice(str, builder);
+      } else if (startsWith(str, "f ")) {
+        ParseFace(str, builder);
+      }
     }
-  }
 
+  qDebug() << "Parsing time: " << debug.elapsed()  << '\n';
   return builder.Build();
 }
 
