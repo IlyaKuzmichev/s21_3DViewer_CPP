@@ -1,0 +1,5 @@
+/Users/wilmerno/github_wilmerno/s21_3DViewer_CPP/src/3DReviewer/cmake-build-debug/CMakeFiles/3DReviewer.dir
+/Users/wilmerno/github_wilmerno/s21_3DViewer_CPP/src/3DReviewer/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/wilmerno/github_wilmerno/s21_3DViewer_CPP/src/3DReviewer/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/wilmerno/github_wilmerno/s21_3DViewer_CPP/src/3DReviewer/cmake-build-debug/CMakeFiles/3DReviewer_autogen_timestamp_deps.dir
+/Users/wilmerno/github_wilmerno/s21_3DViewer_CPP/src/3DReviewer/cmake-build-debug/CMakeFiles/3DReviewer_autogen.dir

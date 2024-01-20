@@ -7,19 +7,17 @@
 #include "model/exception.h"
 
 s21::ObjectBuilder& s21::ObjectBuilder::AddVertice(const s21::Vertex v) {
-  obj_.vertices.push_back(v);
+  obj_->vertices.push_back(v);
   return *this;
 }
 
 s21::ObjectBuilder& s21::ObjectBuilder::AddRawFace(const s21::RawFace rf) {
-  obj_.faces.push_back(ConvertRawFace(rf));
+  obj_->faces.push_back(ConvertRawFace(rf));
   return *this;
 }
 
-s21::Object s21::ObjectBuilder::Build() noexcept {
-  s21::Object result;
-  std::swap(result, obj_);
-  return result;
+s21::Object* s21::ObjectBuilder::Build() noexcept {
+  return obj_.release();
 }
 
 s21::Face s21::ObjectBuilder::ConvertRawFace(const s21::RawFace rf) {
@@ -29,12 +27,12 @@ s21::Face s21::ObjectBuilder::ConvertRawFace(const s21::RawFace rf) {
   for (const auto& idx : rf.vertices_indices) {
     size_t real_idx = 0;
     if (idx == 0 ||
-        (static_cast<size_t>(std::abs(idx) - 1)) >= obj_.vertices.size()) {
+        (static_cast<size_t>(std::abs(idx) - 1)) >= obj_->vertices.size()) {
       throw Exception("vertice index is out of range");
     }
 
     if (idx < 0) {
-      real_idx = static_cast<size_t>(obj_.vertices.size() + idx);
+      real_idx = static_cast<size_t>(obj_->vertices.size() + idx);
     } else {
       real_idx = idx - 1;
     }

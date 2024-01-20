@@ -2,6 +2,7 @@
 #define SRC_MODEL_OBJECT_BUILDER_H_
 
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "model/object.h"
@@ -16,14 +17,19 @@ struct RawFace {
 
 class ObjectBuilder {
  public:
-  ObjectBuilder() : obj_() {}
+  ObjectBuilder() : obj_(std::make_unique<Object>(Object())) {}
+  ObjectBuilder(size_t vertices_amount, size_t faces_amount) {
+    obj_ = std::make_unique<Object>(Object());
+    obj_->vertices.reserve(vertices_amount);
+    obj_->faces.reserve(faces_amount);
+  }
 
   ObjectBuilder& AddVertice(const Vertex v);
   ObjectBuilder& AddRawFace(const RawFace f);
-  Object Build() noexcept;
+  Object* Build() noexcept;
 
  private:
-  Object obj_;
+  std::unique_ptr<Object> obj_;
 
   Face ConvertRawFace(const RawFace f);
 };

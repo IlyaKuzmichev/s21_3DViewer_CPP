@@ -1,11 +1,17 @@
 #include <cmath>
 #include <sstream>
+#include <filesystem>
 #include <fstream>
 #include <vector>
 
 #include "exception.h"
 #include "viewer.h"
 #include "parser.h"
+
+static const double kVerticesPreallocCoeff = 300'000 / 70'000'000.0;
+static const double kFacesPreallocCoeff = 300'000 / 70'000'000.0;
+
+// static const size_t kFileBufSize = 1024 * 1024;
 
 static int axisInt(s21::Viewer::Axis axis) noexcept {
     return static_cast<int>(axis);
@@ -16,30 +22,28 @@ void s21::Viewer::LoadObject(const std::string& filepath) {
         return;
     }
 
-    FILE* f = fopen(filepath.c_str(), "r");
-    if (f == nullptr) {
+    size_t file_bytes = std::filesystem::file_size(filepath);
+
+    std::ifstream stream(filepath);
+    if (!stream.is_open()) {
         throw Exception("Cringe");
     }
 
-//    stream.seekg(0, std::ios::end);
-//    size_t file_size = stream.tellg();
-//    stream.seekg(0, std::ios::beg);
-//    std::vector<char> data(file_size);
-//    stream.read(&data[0], file_size);
+    size_t vertices_prealloc = kVerticesPreallocCoeff * file_bytes;
+    size_t faces_prealloc = kFacesPreallocCoeff * file_bytes;
 
-//    std::string string_stream(data.begin(), data.end());
-//    std::istringstream file_data(string_stream);
-
-    ObjectParser parser;
+    ObjectParser parser(vertices_prealloc, faces_prealloc);
     current_file_ = filepath;
-    Object obj = parser.Parse(f);
-    std::swap(obj, baseState_);
+    auto obj = std::unique_ptr<Object>(parser.Parse(stream));
+    std::swap(obj, base_state_);
+
     params_.Init();
-    currentState_ = baseState_;
+    auto new_current_state = std::make_shared<Object>(*base_state_.get());
+    std::swap(new_current_state, current_state_);
 }
 
 const s21::Object& s21::Viewer::GetObject() const noexcept {
-    return currentState_;
+    return *current_state_;
 }
 
 void s21::Viewer::SetRotation(Axis axis, double angle) noexcept {
@@ -67,7 +71,7 @@ void s21::Viewer::SetScale(double scale) noexcept {
 }
 
 void s21::Viewer::RecountCurrentState() {
-    currentState_ = baseState_;
+    ResetCurrentState();
     RotateOxObject();
     RotateOyObject();
     RotateOzObject();
@@ -76,32 +80,32 @@ void s21::Viewer::RecountCurrentState() {
 }
 
 void s21::Viewer::TranslateObject(Axis axis, double shift) {
-    transformer_.TranslateObject(currentState_, axis, shift - params_.translation[axisInt(axis)]);
+    transformer_.TranslateObject(*current_state_, axis, shift - params_.translation[axisInt(axis)]);
 }
 
 void s21::Viewer::TranslateObject() {
-    transformer_.TranslateObject(currentState_, Axis::kX, params_.translation[axisInt(Axis::kX)]);
-    transformer_.TranslateObject(currentState_, Axis::kY, params_.translation[axisInt(Axis::kY)]);
-    transformer_.TranslateObject(currentState_, Axis::kZ, params_.translation[axisInt(Axis::kZ)]);
+    transformer_.TranslateObject(*current_state_, Axis::kX, params_.translation[axisInt(Axis::kX)]);
+    transformer_.TranslateObject(*current_state_, Axis::kY, params_.translation[axisInt(Axis::kY)]);
+    transformer_.TranslateObject(*current_state_, Axis::kZ, params_.translation[axisInt(Axis::kZ)]);
 }
 
 void s21::Viewer::RotateOxObject() {
     double angle = params_.rotation[axisInt(Axis::kX)];
-    transformer_.RotateObject(currentState_, Axis::kX, angle); 
+    transformer_.RotateObject(*current_state_, Axis::kX, angle);
 }
 
 void s21::Viewer::RotateOyObject() {
     double angle = params_.rotation[axisInt(Axis::kY)];
-    transformer_.RotateObject(currentState_, Axis::kY, angle); 
+    transformer_.RotateObject(*current_state_, Axis::kY, angle);
 }
 
 void s21::Viewer::RotateOzObject() {
     double angle = params_.rotation[axisInt(Axis::kZ)];
-    transformer_.RotateObject(currentState_, Axis::kZ, angle); 
+    transformer_.RotateObject(*current_state_, Axis::kZ, angle);
 }
 
 void s21::Viewer::ScaleObject() {
-    transformer_.ScaleObject(currentState_, params_.scale);
+    transformer_.ScaleObject(*current_state_, params_.scale);
 }
 
 double s21::Viewer::GetTranslation(Axis axis) const noexcept {
@@ -114,4 +118,13 @@ double s21::Viewer::GetRotation(Axis axis) const noexcept {
 
 double s21::Viewer::GetScale() const noexcept {
     return params_.scale;
+}
+
+void s21::Viewer::ResetCurrentState() {
+    for (size_t i = 0; i < current_state_->vertices.size(); ++i) {
+        current_state_->vertices[i] = base_state_->vertices[i];
+    }
+    for (size_t i = 0; i < current_state_->faces.size(); ++i) {
+        current_state_->faces[i] = base_state_->faces[i];
+    }
 }

@@ -1,5 +1,5 @@
 CXX							= g++
-CXXFLAGS				= -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined -I 3DReviewer/
+CXXFLAGS				= -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined -O3 -I 3DReviewer/
 LDFLAGS					= -lgtest_main -lgtest -lpthread 
 VALGRIND_FLAGS	= --log-file="valgrind.txt" --track-origins=yes --trace-children=yes --leak-check=full --leak-resolution=med
 GCOVFLAGS 			= -fprofile-arcs -ftest-coverage
@@ -24,8 +24,11 @@ FILES_TO_CHECK	= $(shell find $(MODEL_DIR) $(CONTROLLER_DIR) $(VIEW_DIR) -name '
 
 all: aboba
 
+aboba_simple:
+	$(CXX) $(CXXFLAGS) $(MODEL_SRC) -g main.cc -o grinch
+
 aboba:
-	$(CXX) $(CXXFLAGS) $(MODEL_SRC) main.cc -o grinch
+	$(CXX) $(CXXFLAGS) -g -L/opt/goinfre/wilmerno/homebrew/Cellar/gperftools/2.15/lib -lprofiler $(MODEL_SRC) main.cc -o grinch
 
 install:
 	@mkdir $(BUILD_DIR)
