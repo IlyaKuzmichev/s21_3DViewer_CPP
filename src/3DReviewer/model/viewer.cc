@@ -1,16 +1,14 @@
-#include "viewer.h"
+#include "model/viewer.h"
 
-#include <QDebug>
-#include <QElapsedTimer>
-#include <QString>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+#include <utility>
 #include <vector>
 
-#include "exception.h"
-#include "parser.h"
+#include "model/exception.h"
+#include "model/parser.h"
 
 static const double kVerticesPreallocCoeff = 300'000. / 70'000'000.;
 static const double kFacesPreallocCoeff = 300'000. / 70'000'000.;
@@ -20,19 +18,16 @@ static int axisInt(s21::Viewer::Axis axis) noexcept {
 }
 
 void s21::Viewer::LoadObject(const std::string& filepath) {
-  QElapsedTimer debug;
-  debug.start();
-
   if (filepath == current_file_) {
     return;
   }
-
-  size_t file_bytes = std::filesystem::file_size(filepath);
 
   std::ifstream stream(filepath);
   if (!stream.is_open()) {
     throw Exception("Cringe");
   }
+
+  size_t file_bytes = std::filesystem::file_size(filepath);
 
   size_t vertices_prealloc = kVerticesPreallocCoeff * file_bytes;
   size_t faces_prealloc = kFacesPreallocCoeff * file_bytes;
@@ -45,7 +40,6 @@ void s21::Viewer::LoadObject(const std::string& filepath) {
   params_.Init();
   auto new_current_state = std::make_shared<Object>(*base_state_.get());
   std::swap(new_current_state, current_state_);
-  qDebug() << "Parsing time: " << debug.elapsed() << '\n';
 }
 
 const s21::Object& s21::Viewer::GetObject() const noexcept {

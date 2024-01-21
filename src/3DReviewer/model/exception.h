@@ -11,14 +11,14 @@ class Exception : public std::exception {
   explicit Exception(const char* message)
       : msg_(kMsgPrefix + std::string(message)) {}
 
-  explicit Exception(const std::string message) : msg_(kMsgPrefix + message) {}
+  explicit Exception(const std::string& message) : msg_(kMsgPrefix + message) {}
 
   const char* what() const noexcept override { return msg_.c_str(); }
 
  private:
   std::string msg_;
 
-  inline const static std::string kMsgPrefix = "Viewer error: ";
+  inline static const std::string kMsgPrefix = "Viewer error: ";
 };
 
 }  // namespace s21

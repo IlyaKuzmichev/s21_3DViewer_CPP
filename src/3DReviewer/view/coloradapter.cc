@@ -1,4 +1,4 @@
-#include "coloradapter.h"
+#include "view/coloradapter.h"
 
 #include <QColorDialog>
 

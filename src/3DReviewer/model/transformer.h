@@ -16,8 +16,9 @@ namespace s21 {
  */
 class Transformer {
  public:
-    /**
-   * @brief The Axis enum - enumeration for X, Y, Z axises for more comfortable usage
+  /**
+   * @brief The Axis enum - enumeration for X, Y, Z axises for more comfortable
+   * usage
    */
   enum class Axis { kX = 0, kY = 1, kZ = 2 };
 
@@ -45,14 +46,13 @@ class Transformer {
    * @param scale
    */
   void ScaleObject(s21::Object& obj, double scale) noexcept;
+
  private:
-
-
   void RotateOxObject(s21::Object& obj, double angle) noexcept;
   void RotateOyObject(s21::Object& obj, double angle) noexcept;
   void RotateOzObject(s21::Object& obj, double angle) noexcept;
 };
 
-}
+}  // namespace s21
 
 #endif  // SRC_MODEL_TRANSFORMER_H_

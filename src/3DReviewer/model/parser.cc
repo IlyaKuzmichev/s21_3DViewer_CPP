@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "model/parser.h"
 
 #include <cmath>
 #include <istream>
@@ -38,20 +38,6 @@ s21::Object* s21::ObjectParser::Parse(std::istream& input) const {
   return builder.Build();
 }
 
-std::pair<size_t, size_t> s21::ObjectParser::ParseObjectSizes(
-    std::istream& input) const {
-  std::string line;
-  std::pair<size_t, size_t> result(0, 0);
-  while (std::getline(input, line)) {
-    if (startsWith(line, "v ")) {
-      ++result.first;
-    } else if (startsWith(line, "f ")) {
-      ++result.second;
-    }
-  }
-  return result;
-}
-
 void s21::ObjectParser::ParseVertice(std::string& line,
                                      s21::ObjectBuilder& builder) const {
   double x, y, z;
@@ -77,31 +63,31 @@ void s21::ObjectParser::ParseFace(std::string& line,
   double num;
   int8_t parse_state = kParseFaceStateOmitWhitespaces;
 
-  while (*iter != '\0') {
+  while (*iter != '\0' && *iter != '#') {
     switch (parse_state) {
-    case kParseFaceStateOmitWhitespaces:
-      if (!std::isspace(*iter)) {
-        parse_state = kParseFaceStateReadNumber;
-      } else {
-        ++iter;
-      }
-      break;
-    case kParseFaceStateReadNumber:
-      num = std::strtod(iter, &end);
-      if (iter == end) {
-        throw Exception("Invalid face");
-      }
-      f.vertices_indices.push_back(num);
-      iter = end;
-      parse_state = kParseFaceStateOmitSymbols;
-      break;
-    case kParseFaceStateOmitSymbols:
-      if (std::isspace(*iter)) {
-        parse_state = kParseFaceStateOmitWhitespaces;
-      } else {
-        ++iter;
-      }
-      break;
+      case kParseFaceStateOmitWhitespaces:
+        if (!std::isspace(*iter)) {
+          parse_state = kParseFaceStateReadNumber;
+        } else {
+          ++iter;
+        }
+        break;
+      case kParseFaceStateReadNumber:
+        num = std::strtod(iter, &end);
+        if (iter == end) {
+          throw Exception("Invalid face");
+        }
+        f.vertices_indices.push_back(num);
+        iter = end;
+        parse_state = kParseFaceStateOmitSymbols;
+        break;
+      case kParseFaceStateOmitSymbols:
+        if (std::isspace(*iter)) {
+          parse_state = kParseFaceStateOmitWhitespaces;
+        } else {
+          ++iter;
+        }
+        break;
     }
   }
 

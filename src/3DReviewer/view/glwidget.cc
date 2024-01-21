@@ -5,8 +5,10 @@
 
 #include "controller/viewer_controller.h"
 
-s21::GLWidget::FullRepaintStrategy* s21::GLWidget::FullRepaintStrategy::fp_strategy_ = nullptr;
-s21::GLWidget::UpdateOnlyRepaintStrategy* s21::GLWidget::UpdateOnlyRepaintStrategy::uo_strategy_ = nullptr;
+s21::GLWidget::FullRepaintStrategy*
+    s21::GLWidget::FullRepaintStrategy::fp_strategy_ = nullptr;
+s21::GLWidget::UpdateOnlyRepaintStrategy*
+    s21::GLWidget::UpdateOnlyRepaintStrategy::uo_strategy_ = nullptr;
 
 s21::GLWidget::GLWidget(QWidget* parent)
     : QOpenGLWidget(parent), current_obj_(nullptr) {}
@@ -27,7 +29,7 @@ void s21::GLWidget::paintGL() {
   drawVertices();
   drawEdges();
 
-  qDebug() << "Time of drawing" << debug.elapsed()  << '\n';
+  qDebug() << "Time of drawing" << debug.elapsed() << '\n';
 }
 
 void s21::GLWidget::drawVertices() {

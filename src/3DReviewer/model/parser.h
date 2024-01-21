@@ -3,9 +3,10 @@
 
 #include <istream>
 #include <sstream>
+#include <string>
 
-#include "object.h"
-#include "object_builder.h"
+#include "model/object.h"
+#include "model/object_builder.h"
 
 namespace s21 {
 
@@ -19,7 +20,6 @@ class ObjectParser {
   Object* Parse(std::istream& input) const;
 
  private:
-  std::pair<size_t, size_t> ParseObjectSizes(std::istream& input) const;
   void ParseVertice(std::string& line, s21::ObjectBuilder& builder) const;
   void ParseFace(std::string& line, s21::ObjectBuilder& builder) const;
   void ProcessStream(const std::string& data,
@@ -28,7 +28,6 @@ class ObjectParser {
   size_t vertices_preallocation_;
   size_t faces_preallocation_;
 };
-
 
 }  // namespace s21
 

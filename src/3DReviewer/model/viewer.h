@@ -70,6 +70,7 @@ class Viewer {
  public:
   using Axis = Transformer::Axis;
 
+  Viewer() = default;
   /**
    * @brief LoadObject - function for loading object from file to model
    * @param filepath - name of the object file
@@ -170,6 +171,7 @@ class Viewer {
    * object - translation, rotation and scale
    */
   struct ObjectParameters {
+    ObjectParameters() { Init(); };
     /**
      * @brief Init - initialization of parameters by zero values
      */

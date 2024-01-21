@@ -2,16 +2,17 @@
 #define VIEW_H
 
 #include <QButtonGroup>
-#include "gif_lib/QtGifImage/include/gifimage/qgifimage.h"
 #include <QMainWindow>
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "controller/viewer_controller.h"
+#include "gif_lib/QtGifImage/include/gifimage/qgifimage.h"
 #include "view/coloradapter.h"
+#include "view/glwidget.h"
 #include "view/lineedit_adapter.h"
 #include "view/scrollbar_adapter.h"
-#include "view/glwidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -24,11 +25,12 @@ class View : public QMainWindow {
   Q_OBJECT
 
  public:
-  View(ViewerController* controller, QWidget *parent = nullptr);
+  explicit View(ViewerController *controller, QWidget *parent = nullptr);
   ~View();
 
  signals:
-  void repaintObject(const s21::ViewerController::Object* object, s21::GLWidget::RepaintStrategy* strategy);
+  void repaintObject(const s21::ViewerController::Object *object,
+                     s21::GLWidget::RepaintStrategy *strategy);
   void updateWidget();
 
  private slots:

@@ -1,5 +1,5 @@
 CXX							= g++
-CXXFLAGS				= -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined -O3 -I 3DReviewer/
+CXXFLAGS				= -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined -I 3DReviewer/ -g
 LDFLAGS					= -lgtest_main -lgtest -lpthread 
 VALGRIND_FLAGS	= --log-file="valgrind.txt" --track-origins=yes --trace-children=yes --leak-check=full --leak-resolution=med
 GCOVFLAGS 			= -fprofile-arcs -ftest-coverage
@@ -18,17 +18,11 @@ ARCHIVE_NAME		= 3DReviewerArchived
 MODEL_SRC				= $(wildcard $(MODEL_DIR)*.cc)
 TEST_SRC				= $(wildcard $(TEST_DIR)*.cc)
 
-FILES_TO_CHECK	= $(shell find $(MODEL_DIR) $(CONTROLLER_DIR) $(VIEW_DIR) -name '*.cc' && find $(MODEL_DIR) $(CONTROLLER_DIR) $(VIEW_DIR) -name '*.h' )
+FILES_TO_CHECK	= $(shell find $(MODEL_DIR) $(CONTROLLER_DIR) $(VIEW_DIR) $(TEST_DIR) -name '*.cc' && find $(MODEL_DIR) $(CONTROLLER_DIR) $(VIEW_DIR) $(TEST_DIR) -name '*.h' )
 
-.PHONY: install uninstall open_calc dist dist_remove tests rebuild clean stylecheck fmt dvi dvi_remove
+.PHONY: install uninstall open_viewer dist dist_remove tests rebuild clean stylecheck fmt dvi dvi_remove
 
-all: aboba
-
-aboba_simple:
-	$(CXX) $(CXXFLAGS) $(MODEL_SRC) main.cc -o grinch
-
-aboba:
-	$(CXX) $(CXXFLAGS) -g -L/opt/goinfre/wilmerno/homebrew/Cellar/gperftools/2.15/lib -lprofiler $(MODEL_SRC) main.cc -o grinch
+all: install open_viewer
 
 install:
 	@mkdir $(BUILD_DIR)
@@ -43,7 +37,7 @@ uninstall:
 
 dist:
 	@mkdir $(ARCHIVE_NAME)
-	@cp -r $(PROJECT_DIR) Makefile $(ARCHIVE_NAME)/
+	@cp -r $(PROJECT) Makefile $(ARCHIVE_NAME)/
 	tar cvzf $(ARCHIVE_NAME).tgz $(ARCHIVE_NAME)/
 	@rm -rf $(ARCHIVE_NAME)
 
@@ -61,7 +55,7 @@ tests:
 	$(CXX) $(CXXFLAGS) $(TEST_SRC) $(MODEL_SRC) -o test $(LDFLAGS)
 	./test
 
-rebuild: clean all
+rebuild: uninstall install
 
 gcovr_report: clean
 	$(CXX) $(CXXFLAGS) $(TEST_SRC) $(MODEL_SRC) -o test $(LDFLAGS) $(GCOVFLAGS)
@@ -85,6 +79,9 @@ fmt:
 	
 stylecheck:
 	@clang-format -n --style=Google $(FILES_TO_CHECK)
+	
+
+cpplint:
 	@cpplint --filter=-legal/copyright,-build/header_guard,-runtime/references $(FILES_TO_CHECK)
 
 cppcheck:

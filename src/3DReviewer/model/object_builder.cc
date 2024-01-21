@@ -1,5 +1,6 @@
 #include "model/object_builder.h"
 
+#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 #include <utility>
@@ -17,8 +18,10 @@ s21::ObjectBuilder& s21::ObjectBuilder::AddRawFace(const s21::RawFace& rf) {
   return *this;
 }
 
-s21::Object* s21::ObjectBuilder::Build() noexcept {
-  NormalizeObject();
+s21::Object* s21::ObjectBuilder::Build(bool normalize) noexcept {
+  if (normalize) {
+    NormalizeObject();
+  }
   return obj_.release();
 }
 

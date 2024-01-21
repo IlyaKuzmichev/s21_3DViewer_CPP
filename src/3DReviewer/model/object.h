@@ -15,7 +15,7 @@ struct Vertex {
 
 struct Face {
   Face() = default;
-  Face(std::vector<std::size_t> vi) : vertices_indices(vi) {}
+  explicit Face(const std::vector<std::size_t>& vi) : vertices_indices(vi) {}
   std::vector<std::size_t> vertices_indices;
 };
 

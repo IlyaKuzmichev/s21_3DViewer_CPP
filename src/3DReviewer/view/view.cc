@@ -7,6 +7,7 @@
 #include <QTimer>
 #include <initializer_list>
 #include <tuple>
+#include <utility>
 
 #include "./ui_view.h"
 #include "controller/viewer_controller.h"
@@ -27,9 +28,11 @@ s21::View::View(ViewerController* controller, QWidget* parent)
   connect(ui->scroll_scale, SIGNAL(valueChanged(int)), this,
           SLOT(updateParams(int)));
   connect(this,
-          SIGNAL(repaintObject(const s21::ViewerController::Object*, s21::GLWidget::RepaintStrategy*)),
+          SIGNAL(repaintObject(const s21::ViewerController::Object*,
+                               s21::GLWidget::RepaintStrategy*)),
           ui->RendererWidget,
-          SLOT(repaintObject(const s21::ViewerController::Object*, s21::GLWidget::RepaintStrategy*)));
+          SLOT(repaintObject(const s21::ViewerController::Object*,
+                             s21::GLWidget::RepaintStrategy*)));
   connect(ui->RendererWidget, &GLWidget::mouseTrigger, this,
           &s21::View::setMouseRotation);
   connect(ui->RendererWidget, &GLWidget::wheelTrigger, this,
@@ -158,7 +161,6 @@ void s21::View::LoadSettings() {
       settings.value("vertices_size", 1.).value<GLfloat>();
   ui->slider_size->setValue(
       static_cast<int>(ui->RendererWidget->widget_settings.vertices_size));
-  ;
 }
 
 void s21::View::setVF(uint64_t vertices, uint64_t faces) {
@@ -275,7 +277,8 @@ void s21::View::updateParams(int) {
 
   controller_->SetScale(ui->line_scale->text().toDouble());
 
-  emit repaintObject(&controller_->GetObject(), GLWidget::UpdateOnlyRepaintStrategy::GetInstance());
+  emit repaintObject(&controller_->GetObject(),
+                     GLWidget::UpdateOnlyRepaintStrategy::GetInstance());
 }
 
 void s21::View::on_action_GIF_triggered() {
