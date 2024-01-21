@@ -94,9 +94,9 @@ void s21::GLWidget::setProjection() {
   GLfloat fov = 60.0 * M_PI / 180;
   GLfloat near = 1 / tan(fov / 2);
   if (widget_settings.is_parallel_projection) {
-    glOrtho(-2., 2., -2., 2., -50, 50.);
+    glOrtho(-2., 2., -2., 2., -10, 10.);
   } else {
-    glFrustum(-0.5, 0.5, -0.5, 0.5, 0.9, 100.);
+    glFrustum(-0.5, 0.5, -0.5, 0.5, near, 100.);
     glTranslated(0, 0, -near * 3);
   }
 }

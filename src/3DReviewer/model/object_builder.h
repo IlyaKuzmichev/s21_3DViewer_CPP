@@ -17,21 +17,25 @@ struct RawFace {
 
 class ObjectBuilder {
  public:
-  ObjectBuilder() : obj_(std::make_unique<Object>(Object())) {}
+  ObjectBuilder() : max_coord_modulo_(0), obj_(std::make_unique<Object>(Object())) {}
   ObjectBuilder(size_t vertices_amount, size_t faces_amount) {
     obj_ = std::make_unique<Object>(Object());
     obj_->vertices.reserve(vertices_amount);
     obj_->faces.reserve(faces_amount);
+    max_coord_modulo_ = 0;
   }
 
-  ObjectBuilder& AddVertice(const Vertex v);
-  ObjectBuilder& AddRawFace(const RawFace f);
+  ObjectBuilder& AddVertice(const Vertex& v);
+  ObjectBuilder& AddRawFace(const RawFace& f);
   Object* Build() noexcept;
 
  private:
+  Face ConvertRawFace(const RawFace& f);
+  void SetMaxModuloValue(const s21::Vertex& v);
+  void NormalizeObject();
+  
+  double max_coord_modulo_;
   std::unique_ptr<Object> obj_;
-
-  Face ConvertRawFace(const RawFace f);
 };
 
 }  // namespace s21

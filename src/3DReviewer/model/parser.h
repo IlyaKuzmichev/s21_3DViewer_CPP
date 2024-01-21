@@ -21,7 +21,7 @@ class ObjectParser {
         void ParseVertice(std::string& line, s21::ObjectBuilder& builder) const;
         void ParseFace(std::string& line, s21::ObjectBuilder& builder) const;
         void ProcessStream(const std::string& data, s21::ObjectBuilder& builder) const;
-
+        
         size_t vertices_preallocation_;
         size_t faces_preallocation_;
 };

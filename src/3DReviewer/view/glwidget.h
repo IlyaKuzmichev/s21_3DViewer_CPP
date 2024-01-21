@@ -41,15 +41,15 @@ class GLWidget : public QOpenGLWidget {
 
   GLSettings widget_settings;
 
-public slots:
- void updateFrame();
- void repaintObject(const s21::ViewerController::Object *obj,
-                    bool fullRepaint);
+ public slots:
+  void updateFrame();
+  void repaintObject(const s21::ViewerController::Object *obj,
+                     bool fullRepaint);
 
-signals:
- void mouseTrigger(double x, double y);
- void wheelTrigger(int increase_scale);
- void sendVF(uint64_t vertices, uint64_t faces);
+ signals:
+  void mouseTrigger(double x, double y);
+  void wheelTrigger(int increase_scale);
+  void sendVF(uint64_t vertices, uint64_t faces);
 
  protected:
   void initializeGL() override;
@@ -66,8 +66,6 @@ signals:
   QPoint lastPos;
   std::vector<uint32_t> faces_in_lines_;
   const s21::ViewerController::Object *current_obj_;
-
-
 };
 
 }  // namespace s21

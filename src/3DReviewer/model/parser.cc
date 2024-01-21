@@ -1,13 +1,10 @@
 #include "parser.h"
 
+#include <cmath>
 #include <istream>
 #include <limits>
 #include <sstream>
 #include <string>
-
-  #include <QDebug>
-  #include <QString>
-  #include <QElapsedTimer>
 
 #include "model/exception.h"
 #include "model/object.h"
@@ -30,9 +27,7 @@ bool startsWith(const std::string& str, const std::string& prefix) {
 }
 
 s21::Object* s21::ObjectParser::Parse(std::istream& input) const {
-    QElapsedTimer debug;
-    debug.start();
-//   auto sizes = ParseObjectSizes(input);
+
 
 //   input.clear();
 //   input.seekg(0);
@@ -46,7 +41,6 @@ s21::Object* s21::ObjectParser::Parse(std::istream& input) const {
       ParseFace(line, builder);
     }
   }
-  qDebug() << "Parsing time: " << debug.elapsed()  << '\n';
   return builder.Build();
 }
 
@@ -126,8 +120,6 @@ void s21::ObjectParser::ParseFace(std::string& line,
 
   builder.AddRawFace(f);
   
-
-
   // std::istringstream stream(line);
 
   // stream.ignore(kStreamMaxSize, ' ');

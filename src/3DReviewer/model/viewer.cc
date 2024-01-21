@@ -4,6 +4,11 @@
 #include <fstream>
 #include <vector>
 
+
+ #include <QDebug>
+ #include <QString>
+ #include <QElapsedTimer>
+
 #include "exception.h"
 #include "viewer.h"
 #include "parser.h"
@@ -18,6 +23,9 @@ static int axisInt(s21::Viewer::Axis axis) noexcept {
 }
 
 void s21::Viewer::LoadObject(const std::string& filepath) {
+   QElapsedTimer debug;
+   debug.start();
+
     if (filepath == current_file_) {
         return;
     }
@@ -40,6 +48,7 @@ void s21::Viewer::LoadObject(const std::string& filepath) {
     params_.Init();
     auto new_current_state = std::make_shared<Object>(*base_state_.get());
     std::swap(new_current_state, current_state_);
+    qDebug() << "Parsing time: " << debug.elapsed()  << '\n';
 }
 
 const s21::Object& s21::Viewer::GetObject() const noexcept {
