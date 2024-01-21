@@ -3,6 +3,7 @@
 
 #include <QColor>
 #include <QObject>
+#include <memory>
 
 class ColorAdapter : public QObject {
   Q_OBJECT

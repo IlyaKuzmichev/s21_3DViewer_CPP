@@ -4,10 +4,13 @@
 #include <QButtonGroup>
 #include <QMainWindow>
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "controller/viewer_controller.h"
+#include "gif_lib/QtGifImage/include/gifimage/qgifimage.h"
 #include "view/coloradapter.h"
+#include "view/glwidget.h"
 #include "view/lineedit_adapter.h"
 #include "view/scrollbar_adapter.h"
 
@@ -22,11 +25,12 @@ class View : public QMainWindow {
   Q_OBJECT
 
  public:
-  View(ViewerController* controller, QWidget *parent = nullptr);
+  explicit View(ViewerController *controller, QWidget *parent = nullptr);
   ~View();
 
  signals:
-  void repaintObject(const s21::ViewerController::Object* object, bool fullRepaint);
+  void repaintObject(const s21::ViewerController::Object *object,
+                     s21::GLWidget::RepaintStrategy *strategy);
   void updateWidget();
 
  private slots:
@@ -43,8 +47,8 @@ class View : public QMainWindow {
   void on_slider_size_valueChanged(int value);
   void on_action_image_triggered();
   void updateParams(int);
-  // void on_action_GIF_triggered();
-  // void saveGifFrame();
+  void on_action_GIF_triggered();
+  void saveGifFrame();
 
  private:
   void SaveSettings();
@@ -60,7 +64,7 @@ class View : public QMainWindow {
   std::vector<std::unique_ptr<LineEditAdapter>> lineEditAdapters;
   std::vector<std::unique_ptr<ColorAdapter>> colorAdapters;
   QButtonGroup group;
-  //  QGifImage *gif = nullptr;
+  QGifImage *gif = nullptr;
   QTimer *timer = nullptr;
   uint8_t frame_counter = 0;
 };

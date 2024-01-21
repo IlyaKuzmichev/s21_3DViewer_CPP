@@ -1,5 +1,6 @@
-#include "parser.h"
+#include "model/parser.h"
 
+#include <cmath>
 #include <istream>
 #include <limits>
 #include <sstream>
@@ -8,8 +9,6 @@
 #include "model/exception.h"
 #include "model/object.h"
 #include "model/object_builder.h"
-
-constexpr auto kStreamMaxSize = std::numeric_limits<std::streamsize>::max();
 
 bool startsWith(const std::string& str, const std::string& prefix) {
   if (prefix.size() > str.size()) {
@@ -25,8 +24,8 @@ bool startsWith(const std::string& str, const std::string& prefix) {
   return true;
 }
 
-s21::Object s21::ObjectParser::Parse(std::istream& input) const {
-  s21::ObjectBuilder builder;
+s21::Object* s21::ObjectParser::Parse(std::istream& input) const {
+  s21::ObjectBuilder builder(vertices_preallocation_, faces_preallocation_);
   std::string line;
 
   while (std::getline(input, line)) {
@@ -36,40 +35,64 @@ s21::Object s21::ObjectParser::Parse(std::istream& input) const {
       ParseFace(line, builder);
     }
   }
-
   return builder.Build();
 }
 
 void s21::ObjectParser::ParseVertice(std::string& line,
                                      s21::ObjectBuilder& builder) const {
   double x, y, z;
-  std::istringstream stream(line);
-  char skip;
-  if (stream >> skip >> x >> y >> z) {
-    builder.AddVertice(s21::Vertex(x, y, z));
-  } else {
+
+  int n = std::sscanf(line.c_str(), "v %lf %lf %lf", &x, &y, &z);
+  if (n != 3) {
     throw Exception("Not valid object file!");
   }
+  builder.AddVertice(Vertex(x, y, z));
 }
+
+static const int8_t kParseFaceStateOmitSymbols = 1;
+static const int8_t kParseFaceStateOmitWhitespaces = 2;
+static const int8_t kParseFaceStateReadNumber = 3;
 
 void s21::ObjectParser::ParseFace(std::string& line,
                                   s21::ObjectBuilder& builder) const {
-  std::istringstream stream(line);
+  const char* iter = line.c_str();
+  ++iter;
 
-  stream.ignore(kStreamMaxSize, ' ');
-  int32_t idx;
   s21::RawFace f;
+  char* end = nullptr;
+  double num;
+  int8_t parse_state = kParseFaceStateOmitWhitespaces;
 
-  if (stream >> idx) {
-    f.vertices_indices.push_back(idx);
-    stream.ignore(kStreamMaxSize, ' ');
-  } else {
-    throw Exception("Empty face");
+  while (*iter != '\0' && *iter != '#') {
+    switch (parse_state) {
+      case kParseFaceStateOmitWhitespaces:
+        if (!std::isspace(*iter)) {
+          parse_state = kParseFaceStateReadNumber;
+        } else {
+          ++iter;
+        }
+        break;
+      case kParseFaceStateReadNumber:
+        num = std::strtod(iter, &end);
+        if (iter == end) {
+          throw Exception("Invalid face");
+        }
+        f.vertices_indices.push_back(num);
+        iter = end;
+        parse_state = kParseFaceStateOmitSymbols;
+        break;
+      case kParseFaceStateOmitSymbols:
+        if (std::isspace(*iter)) {
+          parse_state = kParseFaceStateOmitWhitespaces;
+        } else {
+          ++iter;
+        }
+        break;
+    }
   }
 
-  while (stream >> idx) {
-    f.vertices_indices.push_back(idx);
-    stream.ignore(kStreamMaxSize, ' ');
+  if (f.vertices_indices.size() == 0) {
+    throw Exception("Empty face");
   }
 
   builder.AddRawFace(f);

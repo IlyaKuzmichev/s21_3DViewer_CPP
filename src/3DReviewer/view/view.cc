@@ -1,6 +1,4 @@
 #include "view/view.h"
-#include "controller/viewer_controller.h"
-
 
 #include <QColorDialog>
 #include <QFileDialog>
@@ -9,10 +7,16 @@
 #include <QTimer>
 #include <initializer_list>
 #include <tuple>
+#include <utility>
 
 #include "./ui_view.h"
+#include "controller/viewer_controller.h"
 
-s21::View::View(ViewerController* controller, QWidget* parent) : QMainWindow(parent), ui(new Ui::View), controller_(controller) {
+s21::View::View(ViewerController* controller, QWidget* parent)
+    : QMainWindow(parent),
+      ui(new Ui::View),
+      controller_(controller),
+      timer(new QTimer(0)) {
   ui->setupUi(this);
   LoadSettings();
 
@@ -23,9 +27,12 @@ s21::View::View(ViewerController* controller, QWidget* parent) : QMainWindow(par
   connect(timer, SIGNAL(timeout()), this, SLOT(saveGifFrame()));
   connect(ui->scroll_scale, SIGNAL(valueChanged(int)), this,
           SLOT(updateParams(int)));
-  connect(this, SIGNAL(repaintObject(const s21::ViewerController::Object*, bool)),
-    ui->RendererWidget,
-          SLOT(repaintObject(const s21::ViewerController::Object*, bool)));
+  connect(this,
+          SIGNAL(repaintObject(const s21::ViewerController::Object*,
+                               s21::GLWidget::RepaintStrategy*)),
+          ui->RendererWidget,
+          SLOT(repaintObject(const s21::ViewerController::Object*,
+                             s21::GLWidget::RepaintStrategy*)));
   connect(ui->RendererWidget, &GLWidget::mouseTrigger, this,
           &s21::View::setMouseRotation);
   connect(ui->RendererWidget, &GLWidget::wheelTrigger, this,
@@ -42,10 +49,10 @@ s21::View::View(ViewerController* controller, QWidget* parent) : QMainWindow(par
 
 s21::View::~View() {
   SaveSettings();
-  //    if (gif) {
-  //      delete gif;
-  //    }
-  //    delete timer;
+  if (gif) {
+    delete gif;
+  }
+  delete timer;
   delete ui;
 }
 
@@ -144,7 +151,8 @@ void s21::View::LoadSettings() {
       5. * ui->RendererWidget->widget_settings.edges_thickness));
   ui->RendererWidget->widget_settings.vertices_type =
       settings.value("vertices_type", 0.).value<int>();
-  if (ui->RendererWidget->widget_settings.vertices_type != DisplayMethod::none) {
+  if (ui->RendererWidget->widget_settings.vertices_type !=
+      DisplayMethod::none) {
     ui->RendererWidget->widget_settings.vertices_type == DisplayMethod::circle
         ? ui->radioButton_display_circle->setChecked(true)
         : ui->radioButton_display_square->setChecked(true);
@@ -153,7 +161,6 @@ void s21::View::LoadSettings() {
       settings.value("vertices_size", 1.).value<GLfloat>();
   ui->slider_size->setValue(
       static_cast<int>(ui->RendererWidget->widget_settings.vertices_size));
-  ;
 }
 
 void s21::View::setVF(uint64_t vertices, uint64_t faces) {
@@ -180,37 +187,41 @@ void s21::View::on_button_open_clicked() {
                                                   "Object files (*.obj)");
 
   if (filename == ui->line_filepath->text()) {
-      return;
+    return;
   }
   controller_->LoadObject(filename);
 
   const auto& obj = controller_->GetObject();
 
-  emit repaintObject(&obj, true);
+  emit repaintObject(&obj, GLWidget::FullRepaintStrategy::GetInstance());
 
   setVF(obj.vertices.size(), obj.faces.size());
   ui->line_filepath->setText(filename);
-  ui->scroll_rotate_x->setValue(controller_->GetRotation(s21::ViewerController::Axis::kX));
-  ui->scroll_rotate_y->setValue(controller_->GetRotation(s21::ViewerController::Axis::kY));
-  ui->scroll_rotate_z->setValue(controller_->GetRotation(s21::ViewerController::Axis::kZ));
-  ui->scroll_translate_x->setValue(controller_->GetTranslation(s21::ViewerController::Axis::kX));
-  ui->scroll_translate_y->setValue(controller_->GetTranslation(s21::ViewerController::Axis::kY));
-  ui->scroll_translate_z->setValue(controller_->GetTranslation(s21::ViewerController::Axis::kZ));
+  ui->scroll_rotate_x->setValue(
+      controller_->GetRotation(s21::ViewerController::Axis::kX));
+  ui->scroll_rotate_y->setValue(
+      controller_->GetRotation(s21::ViewerController::Axis::kY));
+  ui->scroll_rotate_z->setValue(
+      controller_->GetRotation(s21::ViewerController::Axis::kZ));
+  ui->scroll_translate_x->setValue(
+      controller_->GetTranslation(s21::ViewerController::Axis::kX));
+  ui->scroll_translate_y->setValue(
+      controller_->GetTranslation(s21::ViewerController::Axis::kY));
+  ui->scroll_translate_z->setValue(
+      controller_->GetTranslation(s21::ViewerController::Axis::kZ));
   ui->scroll_scale->setValue(controller_->GetScale());
 }
 
-
-
 void s21::View::on_scroll_scale_valueChanged(int value) {
-  double scale = pow(10., static_cast<double>(value) / ui->scroll_scale->maximum());
-  ui->line_scale->setText(
-      QString::number(scale));
+  double scale =
+      pow(10., static_cast<double>(value) / ui->scroll_scale->maximum());
+  ui->line_scale->setText(QString::number(scale));
 }
 
 void s21::View::on_line_scale_editingFinished() {
-  double scale = ui->scroll_scale->maximum() * log10(ui->line_scale->text().toDouble());
-  ui->scroll_scale->setValue(
-      static_cast<int>(scale));
+  double scale =
+      ui->scroll_scale->maximum() * log10(ui->line_scale->text().toDouble());
+  ui->scroll_scale->setValue(static_cast<int>(scale));
 }
 
 void s21::View::on_radioButton_parallel_toggled(bool checked) {
@@ -247,42 +258,51 @@ void s21::View::on_action_image_triggered() {
 }
 
 void s21::View::updateParams(int) {
-  controller_->SetTranslation(s21::ViewerController::Axis::kX, static_cast<double>(ui->scroll_translate_x->value()) / 100.);
-  controller_->SetTranslation(s21::ViewerController::Axis::kY, static_cast<double>(ui->scroll_translate_y->value()) / 100.);
-  controller_->SetTranslation(s21::ViewerController::Axis::kZ, static_cast<double>(ui->scroll_translate_z->value()) / 100.);
+  controller_->SetTranslation(
+      s21::ViewerController::Axis::kX,
+      static_cast<double>(ui->scroll_translate_x->value()) / 100.);
+  controller_->SetTranslation(
+      s21::ViewerController::Axis::kY,
+      static_cast<double>(ui->scroll_translate_y->value()) / 100.);
+  controller_->SetTranslation(
+      s21::ViewerController::Axis::kZ,
+      static_cast<double>(ui->scroll_translate_z->value()) / 100.);
 
-  controller_->SetRotation(s21::ViewerController::Axis::kX, ui->scroll_rotate_x->value() / 180.0 * M_PI);
-  controller_->SetRotation(s21::ViewerController::Axis::kY, ui->scroll_rotate_y->value() / 180.0 * M_PI);
-  controller_->SetRotation(s21::ViewerController::Axis::kZ, ui->scroll_rotate_z->value() / 180.0 * M_PI);
+  controller_->SetRotation(s21::ViewerController::Axis::kX,
+                           ui->scroll_rotate_x->value() / 180.0 * M_PI);
+  controller_->SetRotation(s21::ViewerController::Axis::kY,
+                           ui->scroll_rotate_y->value() / 180.0 * M_PI);
+  controller_->SetRotation(s21::ViewerController::Axis::kZ,
+                           ui->scroll_rotate_z->value() / 180.0 * M_PI);
 
   controller_->SetScale(ui->line_scale->text().toDouble());
 
-  emit repaintObject(&controller_->GetObject(), false);
+  emit repaintObject(&controller_->GetObject(),
+                     GLWidget::UpdateOnlyRepaintStrategy::GetInstance());
 }
 
-// void s21::View::on_action_GIF_triggered() {
-//   if (gif) {
-//     delete gif;
-//   }
-//   gif = new QGifImage;
-//   gif->setDefaultDelay(100);
-//   frame_counter = 0;
-//   timer->start(100);
-// }
+void s21::View::on_action_GIF_triggered() {
+  if (gif) {
+    delete gif;
+  }
+  gif = new QGifImage;
+  gif->setDefaultDelay(100);
+  frame_counter = 0;
+  timer->start(100);
+}
 
-// void s21::View::saveGifFrame() {
-//   if (frame_counter < 50) {
-//     QImage frame = ui->RendererWidget->grabFramebuffer().scaled(
-//         640, 480, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-//     gif->addFrame(frame);
-//     ++frame_counter;
-//   } else {
-//     timer->stop();
-//     QString gifSavePath =
-//         QFileDialog::getSaveFileName(this, "Save as...", "name", "GIF
-//         (*.gif)");
-//     if (!gifSavePath.isNull()) {
-//       gif->save(gifSavePath);
-//     }
-//   }
-// }
+void s21::View::saveGifFrame() {
+  if (frame_counter < 50) {
+    QImage frame = ui->RendererWidget->grabFramebuffer().scaled(
+        640, 480, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    gif->addFrame(frame);
+    ++frame_counter;
+  } else {
+    timer->stop();
+    QString gifSavePath =
+        QFileDialog::getSaveFileName(this, "Save as...", "name", "GIF(*.gif)");
+    if (!gifSavePath.isNull()) {
+      gif->save(gifSavePath);
+    }
+  }
+}
