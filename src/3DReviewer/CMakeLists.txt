@@ -11,12 +11,14 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -O2")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -fsanitize=address,undefined")
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS OpenGLWidgets)
+
+add_subdirectory(gif_lib/QtGifImage)
 
 set(PROJECT_SOURCES
         main.cc
@@ -71,8 +73,13 @@ else()
     endif()
 endif()
 
+set(LINK_LIBRARIES
+        QtGifImage::QtGifImage
+)
+
 target_link_libraries(3DReviewer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(3DReviewer PRIVATE Qt6::OpenGLWidgets)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${LINK_LIBRARIES})
 
 set_target_properties(3DReviewer PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

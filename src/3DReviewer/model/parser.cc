@@ -10,8 +10,6 @@
 #include "model/object.h"
 #include "model/object_builder.h"
 
-//constexpr auto kStreamMaxSize = std::numeric_limits<std::streamsize>::max();
-
 bool startsWith(const std::string& str, const std::string& prefix) {
   if (prefix.size() > str.size()) {
     return false;
@@ -27,13 +25,9 @@ bool startsWith(const std::string& str, const std::string& prefix) {
 }
 
 s21::Object* s21::ObjectParser::Parse(std::istream& input) const {
-
-
-//   input.clear();
-//   input.seekg(0);
-
   s21::ObjectBuilder builder(vertices_preallocation_, faces_preallocation_);
   std::string line;
+
   while (std::getline(input, line)) {
     if (startsWith(line, "v ")) {
       ParseVertice(line, builder);
@@ -44,7 +38,8 @@ s21::Object* s21::ObjectParser::Parse(std::istream& input) const {
   return builder.Build();
 }
 
-std::pair<size_t, size_t> s21::ObjectParser::ParseObjectSizes(std::istream& input) const {
+std::pair<size_t, size_t> s21::ObjectParser::ParseObjectSizes(
+    std::istream& input) const {
   std::string line;
   std::pair<size_t, size_t> result(0, 0);
   while (std::getline(input, line)) {
@@ -64,14 +59,12 @@ void s21::ObjectParser::ParseVertice(std::string& line,
   int n = std::sscanf(line.c_str(), "v %lf %lf %lf", &x, &y, &z);
   if (n != 3) {
     throw Exception("Not valid object file!");
-  } 
+  }
   builder.AddVertice(Vertex(x, y, z));
 }
 
 void s21::ObjectParser::ParseFace(std::string& line,
                                   s21::ObjectBuilder& builder) const {
-  
-  
   const char* iter = line.c_str();
   ++iter;
 
@@ -119,24 +112,4 @@ void s21::ObjectParser::ParseFace(std::string& line,
   }
 
   builder.AddRawFace(f);
-  
-  // std::istringstream stream(line);
-
-  // stream.ignore(kStreamMaxSize, ' ');
-  // int32_t idx;
-  // s21::RawFace f;
-
-  // if (stream >> idx) {
-  //   f.vertices_indices.push_back(idx);
-  //   stream.ignore(kStreamMaxSize, ' ');
-  // } else {
-  //   throw Exception("Empty face");
-  // }
-
-  // while (stream >> idx) {
-  //   f.vertices_indices.push_back(idx);
-  //   stream.ignore(kStreamMaxSize, ' ');
-  // }
-
-  // builder.AddRawFace(f);
 }

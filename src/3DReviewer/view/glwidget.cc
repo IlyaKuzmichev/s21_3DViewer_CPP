@@ -11,8 +11,8 @@ s21::GLWidget::GLWidget(QWidget* parent)
 void s21::GLWidget::initializeGL() { glEnable(GL_DEPTH_TEST); }
 
 void s21::GLWidget::paintGL() {
-//  QElapsedTimer debug;
-//  debug.start();
+  QElapsedTimer debug;
+  debug.start();
   setProjection();
   glClearColor(widget_settings.bg_colour.redF(),
                widget_settings.bg_colour.greenF(),
@@ -24,7 +24,7 @@ void s21::GLWidget::paintGL() {
   drawVertices();
   drawEdges();
 
-//  qDebug() << "Time of drawing" << debug.elapsed()  << '\n';
+  qDebug() << "Time of drawing" << debug.elapsed()  << '\n';
 }
 
 void s21::GLWidget::drawVertices() {
@@ -112,6 +112,7 @@ void s21::GLWidget::repaintObject(const s21::ViewerController::Object* obj,
   }
 
   faces_in_lines_.clear();
+  faces_in_lines_.reserve(obj->faces.size() * obj->faces[0].vertices_indices.size() * 2);
   for (const auto& f : obj->faces) {
     faces_in_lines_.push_back(f.vertices_indices[0]);
     for (size_t i = 1; i < f.vertices_indices.size(); ++i) {

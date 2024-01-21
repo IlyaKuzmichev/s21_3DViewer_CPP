@@ -127,7 +127,7 @@ class Viewer {
    * @brief RecountCurrentState - function, that init recounting current state
    * of the object
    */
-  void RecountCurrentState();
+  void RecountCurrentState() noexcept;
 
   /**
    * @brief TranslateObject - function for fast translate of the object only by
@@ -135,35 +135,35 @@ class Viewer {
    * @param axis - name of the axis
    * @param shift - value of the shift
    */
-  void TranslateObject(Axis axis, double shift);
+  void TranslateObject(Axis axis, double shift) noexcept;
 
   /**
    * @brief TranslateObject - function for translating object from initial state
    * by all axises
    */
-  void TranslateObject();
+  void TranslateObject() noexcept;
 
   /**
    * @brief RotateOxObject - function for rotating object by X axis
    */
-  void RotateOxObject();
+  void RotateOxObject() noexcept;
 
   /**
    * @brief RotateOyObject function for rotating object by Y axis
    */
-  void RotateOyObject();
+  void RotateOyObject() noexcept;
 
   /**
    * @brief RotateOzObject - function for rotating object by Z axis
    */
-  void RotateOzObject();
+  void RotateOzObject() noexcept;
 
   /**
    * @brief ScaleObject - function for changing scale of the object
    */
-  void ScaleObject();
+  void ScaleObject() noexcept;
 
-  void ResetCurrentState();
+  void ResetCurrentState() noexcept;
 
   /**
    * @brief The ObjectParameters struct Handling parameters of the current

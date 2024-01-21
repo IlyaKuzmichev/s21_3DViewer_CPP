@@ -2,6 +2,7 @@
 #define VIEW_H
 
 #include <QButtonGroup>
+#include "gif_lib/QtGifImage/include/gifimage/qgifimage.h"
 #include <QMainWindow>
 #include <cstdint>
 #include <vector>
@@ -43,8 +44,8 @@ class View : public QMainWindow {
   void on_slider_size_valueChanged(int value);
   void on_action_image_triggered();
   void updateParams(int);
-  // void on_action_GIF_triggered();
-  // void saveGifFrame();
+  void on_action_GIF_triggered();
+  void saveGifFrame();
 
  private:
   void SaveSettings();
@@ -60,7 +61,7 @@ class View : public QMainWindow {
   std::vector<std::unique_ptr<LineEditAdapter>> lineEditAdapters;
   std::vector<std::unique_ptr<ColorAdapter>> colorAdapters;
   QButtonGroup group;
-  //  QGifImage *gif = nullptr;
+  QGifImage *gif = nullptr;
   QTimer *timer = nullptr;
   uint8_t frame_counter = 0;
 };

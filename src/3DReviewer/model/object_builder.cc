@@ -45,15 +45,14 @@ s21::Face s21::ObjectBuilder::ConvertRawFace(const s21::RawFace& rf) {
 }
 
 void s21::ObjectBuilder::SetMaxModuloValue(const s21::Vertex& v) {
-    double modulo_x = std::fabs(v.x);
-    double modulo_y = std::fabs(v.y);
-    double max = std::max(modulo_x, modulo_y);
+  double modulo_x = std::fabs(v.x);
+  double modulo_y = std::fabs(v.y);
+  double max = std::max(modulo_x, modulo_y);
 
-    if (max > max_coord_modulo_) {
-      max_coord_modulo_ = max;
-    }
+  if (max > max_coord_modulo_) {
+    max_coord_modulo_ = max;
+  }
 }
-
 
 void s21::ObjectBuilder::NormalizeObject() {
   for (auto& vertex : obj_->vertices) {
