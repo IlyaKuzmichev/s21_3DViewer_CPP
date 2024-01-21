@@ -11,6 +11,7 @@
 #include "view/coloradapter.h"
 #include "view/lineedit_adapter.h"
 #include "view/scrollbar_adapter.h"
+#include "view/glwidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -27,7 +28,7 @@ class View : public QMainWindow {
   ~View();
 
  signals:
-  void repaintObject(const s21::ViewerController::Object* object, bool fullRepaint);
+  void repaintObject(const s21::ViewerController::Object* object, s21::GLWidget::RepaintStrategy* strategy);
   void updateWidget();
 
  private slots:

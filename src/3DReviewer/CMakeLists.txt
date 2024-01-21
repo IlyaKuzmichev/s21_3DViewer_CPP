@@ -73,13 +73,13 @@ else()
     endif()
 endif()
 
-set(LINK_LIBRARIES
-        QtGifImage::QtGifImage
-)
+#set(LINK_LIBRARIES
+#        QtGifImage::QtGifImage
+#)
 
-target_link_libraries(3DReviewer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(3DReviewer PRIVATE Qt6::OpenGLWidgets)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${LINK_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::OpenGLWidgets)
+target_link_libraries(${PROJECT_NAME} PRIVATE QtGifImage::QtGifImage)
 
 set_target_properties(3DReviewer PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

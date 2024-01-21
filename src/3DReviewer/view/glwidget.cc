@@ -5,6 +5,9 @@
 
 #include "controller/viewer_controller.h"
 
+s21::GLWidget::FullRepaintStrategy* s21::GLWidget::FullRepaintStrategy::fp_strategy_ = nullptr;
+s21::GLWidget::UpdateOnlyRepaintStrategy* s21::GLWidget::UpdateOnlyRepaintStrategy::uo_strategy_ = nullptr;
+
 s21::GLWidget::GLWidget(QWidget* parent)
     : QOpenGLWidget(parent), current_obj_(nullptr) {}
 
@@ -104,23 +107,7 @@ void s21::GLWidget::setProjection() {
 void s21::GLWidget::updateFrame() { update(); }
 
 void s21::GLWidget::repaintObject(const s21::ViewerController::Object* obj,
-                                  bool fullRepaint) {
-  if (!fullRepaint) {
-    current_obj_ = obj;
-    update();
-    return;
-  }
-
-  faces_in_lines_.clear();
-  faces_in_lines_.reserve(obj->faces.size() * obj->faces[0].vertices_indices.size() * 2);
-  for (const auto& f : obj->faces) {
-    faces_in_lines_.push_back(f.vertices_indices[0]);
-    for (size_t i = 1; i < f.vertices_indices.size(); ++i) {
-      faces_in_lines_.push_back(f.vertices_indices[i]);
-      faces_in_lines_.push_back(f.vertices_indices[i]);
-    }
-    faces_in_lines_.push_back(f.vertices_indices[0]);
-  }
-
-  update();
+                                  RepaintStrategy* strategy) {
+  current_obj_ = obj;
+  strategy->Repaint(obj, faces_in_lines_, this);
 }

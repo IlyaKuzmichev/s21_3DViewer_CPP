@@ -13,7 +13,7 @@ VIEW_DIR				= $(PROJECT_DIR)view/
 TEST_DIR				= $(PROJECT_DIR)model/tests/
 
 BUILD_DIR				= build/
-ARCH_NAME				= 
+ARCHIVE_NAME		= 3DReviewerArchived
 
 MODEL_SRC				= $(wildcard $(MODEL_DIR)*.cc)
 TEST_SRC				= $(wildcard $(TEST_DIR)*.cc)
@@ -25,7 +25,7 @@ FILES_TO_CHECK	= $(shell find $(MODEL_DIR) $(CONTROLLER_DIR) $(VIEW_DIR) -name '
 all: aboba
 
 aboba_simple:
-	$(CXX) $(CXXFLAGS) $(MODEL_SRC) -g main.cc -o grinch
+	$(CXX) $(CXXFLAGS) $(MODEL_SRC) main.cc -o grinch
 
 aboba:
 	$(CXX) $(CXXFLAGS) -g -L/opt/goinfre/wilmerno/homebrew/Cellar/gperftools/2.15/lib -lprofiler $(MODEL_SRC) main.cc -o grinch
@@ -42,13 +42,13 @@ uninstall:
 	@rm -rf build*
 
 dist:
-	@mkdir $(ARCH_NAME)
-	@cp -r $(PROJECT_DIR) Makefile $(ARCH_NAME)/
-	tar cvzf $(ARCH_NAME).tgz $(ARCH_NAME)/
-	@rm -rf $(ARCH_NAME)
+	@mkdir $(ARCHIVE_NAME)
+	@cp -r $(PROJECT_DIR) Makefile $(ARCHIVE_NAME)/
+	tar cvzf $(ARCHIVE_NAME).tgz $(ARCHIVE_NAME)/
+	@rm -rf $(ARCHIVE_NAME)
 
 dist_remove:
-	@rm -rf $(ARCH_NAME)*
+	@rm -rf $(ARCHIVE_NAME)*
 
 dvi:
 	doxygen doxconf

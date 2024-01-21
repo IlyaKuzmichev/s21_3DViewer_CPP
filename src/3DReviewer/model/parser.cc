@@ -63,52 +63,50 @@ void s21::ObjectParser::ParseVertice(std::string& line,
   builder.AddVertice(Vertex(x, y, z));
 }
 
+static const int8_t kParseFaceStateOmitSymbols = 1;
+static const int8_t kParseFaceStateOmitWhitespaces = 2;
+static const int8_t kParseFaceStateReadNumber = 3;
+
 void s21::ObjectParser::ParseFace(std::string& line,
                                   s21::ObjectBuilder& builder) const {
   const char* iter = line.c_str();
   ++iter;
 
-  while (*iter != '\0' && std::isspace(*iter)) {
-    ++iter;
-  }
-
-  if (*iter == '\0') {
-    throw Exception("Empty face");
-  }
-
   s21::RawFace f;
-
   char* end = nullptr;
-  auto num = std::strtod(iter, &end);
-  if (iter == end) {
-    throw Exception("Empty face");
-  }
-  f.vertices_indices.push_back(num);
-  iter = end;
+  double num;
+  int8_t parse_state = kParseFaceStateOmitWhitespaces;
 
   while (*iter != '\0') {
-    while (*iter != '\0' && !std::isspace(*iter)) {
-      ++iter;
-    }
-
-    if (*iter == '\0') {
+    switch (parse_state) {
+    case kParseFaceStateOmitWhitespaces:
+      if (!std::isspace(*iter)) {
+        parse_state = kParseFaceStateReadNumber;
+      } else {
+        ++iter;
+      }
+      break;
+    case kParseFaceStateReadNumber:
+      num = std::strtod(iter, &end);
+      if (iter == end) {
+        throw Exception("Invalid face");
+      }
+      f.vertices_indices.push_back(num);
+      iter = end;
+      parse_state = kParseFaceStateOmitSymbols;
+      break;
+    case kParseFaceStateOmitSymbols:
+      if (std::isspace(*iter)) {
+        parse_state = kParseFaceStateOmitWhitespaces;
+      } else {
+        ++iter;
+      }
       break;
     }
+  }
 
-    while (*iter != '\0' && std::isspace(*iter)) {
-      ++iter;
-    }
-
-    if (*iter == '\0') {
-      break;
-    }
-
-    auto num = std::strtod(iter, &end);
-    if (iter == end) {
-      throw Exception("Empty face");
-    }
-    f.vertices_indices.push_back(num);
-    iter = end;
+  if (f.vertices_indices.size() == 0) {
+    throw Exception("Empty face");
   }
 
   builder.AddRawFace(f);

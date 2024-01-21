@@ -27,9 +27,9 @@ s21::View::View(ViewerController* controller, QWidget* parent)
   connect(ui->scroll_scale, SIGNAL(valueChanged(int)), this,
           SLOT(updateParams(int)));
   connect(this,
-          SIGNAL(repaintObject(const s21::ViewerController::Object*, bool)),
+          SIGNAL(repaintObject(const s21::ViewerController::Object*, s21::GLWidget::RepaintStrategy*)),
           ui->RendererWidget,
-          SLOT(repaintObject(const s21::ViewerController::Object*, bool)));
+          SLOT(repaintObject(const s21::ViewerController::Object*, s21::GLWidget::RepaintStrategy*)));
   connect(ui->RendererWidget, &GLWidget::mouseTrigger, this,
           &s21::View::setMouseRotation);
   connect(ui->RendererWidget, &GLWidget::wheelTrigger, this,
@@ -191,7 +191,7 @@ void s21::View::on_button_open_clicked() {
 
   const auto& obj = controller_->GetObject();
 
-  emit repaintObject(&obj, true);
+  emit repaintObject(&obj, GLWidget::FullRepaintStrategy::GetInstance());
 
   setVF(obj.vertices.size(), obj.faces.size());
   ui->line_filepath->setText(filename);
@@ -275,7 +275,7 @@ void s21::View::updateParams(int) {
 
   controller_->SetScale(ui->line_scale->text().toDouble());
 
-  emit repaintObject(&controller_->GetObject(), false);
+  emit repaintObject(&controller_->GetObject(), GLWidget::UpdateOnlyRepaintStrategy::GetInstance());
 }
 
 void s21::View::on_action_GIF_triggered() {
